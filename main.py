@@ -8,10 +8,13 @@
 import torch 
 import makelist
 import sys
-import mlcdataset
+
+# Module containing the dataset
+import mlcdataset as mlc
 
 from torch import nn
 from torch.utils.data import DataLoader
+from torch.optim import SGD
 
 class Net(nn.Module):
     def __init__(self):
@@ -61,3 +64,4 @@ else:
 
 cnn = Net()
 
+training_data = mlc.MLCDataset

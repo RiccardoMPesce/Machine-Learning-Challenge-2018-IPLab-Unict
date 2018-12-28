@@ -48,10 +48,6 @@ class MLCDataset(Dataset):
     def __len__(self):
         return len(self.image_list)
 
-
-# dataset without normalization
-dataset = MLCDataset("dataset/images", "labeled.csv", transform=transforms.ToTensor())
-
 # Precomputed mean and std so as to save time.
 # Code to calculate them is commented beneath
 mean = torch.tensor([0.3881, 0.3659, 0.3551])
@@ -78,9 +74,6 @@ print mean, std
 """
 
 # Composing the transform
-transform = transforms.Compose([transforms.ToTensor(),
-                                transforms.Normalize(mean, std),
-                                transforms.Lambda(lambda x: x.view(-1))])
-
-# Now we can create our normalized dataset
-dataset = MLCDataset("dataset/images", "validation_set.csv", transform=transform)
+normalization = transforms.Compose([transforms.ToTensor(),
+                                    transforms.Normalize(mean, std),
+                                    transforms.Lambda(lambda x: x.view(-1))])
