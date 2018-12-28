@@ -52,9 +52,16 @@ class MLCDataset(Dataset):
 # dataset without normalization
 dataset = MLCDataset("dataset/images", "labeled.csv", transform=transforms.ToTensor())
 
+# Precomputed mean and std so as to save time.
+# Code to calculate them is commented beneath
+mean = torch.tensor([0.3881, 0.3659, 0.3551])
+std = torch.tensor([0.2088, 0.2086, 0.2085])
+
+"""
+How to calculate mean and std
+
 mean = torch.zeros(3)
 std = torch.zeros(3)
-
 for sample in dataset:
     mean[0] += sample["image"][0, :, :].mean()
     mean[1] += sample["image"][1, :, :].mean()
@@ -68,6 +75,7 @@ mean /= len(dataset)
 std /= len(dataset)
 
 print mean, std
+"""
 
 # Composing the transform
 transform = transforms.Compose([transforms.ToTensor(),
