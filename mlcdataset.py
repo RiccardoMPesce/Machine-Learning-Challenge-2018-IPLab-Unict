@@ -50,32 +50,28 @@ class MLCDataset(Dataset):
 
 
 # dataset without normalization
-dataset = MLCDataset("dataset/images", "labeled.csv", transform=None)
+dataset = MLCDataset("dataset/images", "labeled.csv", transform=transforms.ToTensor())
 
-mean = np.zeros(3)
-var = np.zeros(3)
+mean = torch.zeros(3)
+std = torch.zeros(3)
 
 for sample in dataset:
-    img_pix = np.asarray(sample["image"].convert("RGB"))
-    
-    red_channel = img_pix[:, :, 0]
-    green_channel = img_pix[:, :, 1]
-    blue_channel = img_pix[:, :, 2]
+    mean[0] = sample["image"][0, :, :].mean()
+    mean[1] = sample["image"][1, :, :].mean()
+    mean[2] = sample["image"][2, :, :].mean()
 
-    mean[0] += red_channel.mean()
-    mean[1] += green_channel.mean()
-    mean[2] += blue_channel.mean()
+    std[0] = sample["image"][0, :, :].std()
+    std[1] = sample["image"][1, :, :].std()
+    std[2] = sample["image"][2, :, :].std()
 
-    var[0] += red_channel.var()
-    var[1] += green_channel.var()
-    var[2] += blue_channel.var()
+mean /= len(dataset)
+std /= len(dataset)
 
-mean /= dataset.__len__()
-var /= dataset.__len__()
+print mean, std
 
 # Composing the transform
 transform = transforms.Compose([transforms.ToTensor(),
-                                transforms.Normalize(mean, var),
+                                transforms.Normalize(mean, std),
                                 transforms.Lambda(lambda x: x.view(-1))])
 
 # Now we can create our normalized dataset
@@ -83,5 +79,5 @@ unnorm = MLCDataset("dataset/images", "validation_set.csv", transform=transforms
 norm = MLCDataset("dataset/images", "validation_set.csv", transform=transform)
 
 # Optional test
-print unnorm[0]["image"]
+# print unnorm[0]["image"]
 print norm[0]["image"]
