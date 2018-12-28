@@ -56,13 +56,13 @@ mean = torch.zeros(3)
 std = torch.zeros(3)
 
 for sample in dataset:
-    mean[0] = sample["image"][0, :, :].mean()
-    mean[1] = sample["image"][1, :, :].mean()
-    mean[2] = sample["image"][2, :, :].mean()
+    mean[0] += sample["image"][0, :, :].mean()
+    mean[1] += sample["image"][1, :, :].mean()
+    mean[2] += sample["image"][2, :, :].mean()
 
-    std[0] = sample["image"][0, :, :].std()
-    std[1] = sample["image"][1, :, :].std()
-    std[2] = sample["image"][2, :, :].std()
+    std[0] += sample["image"][0, :, :].std()
+    std[1] += sample["image"][1, :, :].std()
+    std[2] += sample["image"][2, :, :].std()
 
 mean /= len(dataset)
 std /= len(dataset)
