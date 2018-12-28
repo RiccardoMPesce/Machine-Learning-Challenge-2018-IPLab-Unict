@@ -75,4 +75,4 @@ transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Lambda(lambda x: x.view(-1))])
 
 # Now we can create our normalized dataset
-norm = MLCDataset("dataset/images", "validation_set.csv", transform=transform)
+dataset = MLCDataset("dataset/images", "validation_set.csv", transform=transform)
