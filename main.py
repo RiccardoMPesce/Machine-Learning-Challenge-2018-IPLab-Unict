@@ -19,37 +19,7 @@ from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 
 class Net(nn.Module):
-    def __init__(self):
-        """
-        Image classification cnn
-        Input: 
-            - 3 channels (RGB)
-        Output:
-            - Number in (0, 15) 
-        """
-        super(Net, self).__init__()
-        self.feature_extractor = nn.Sequential(
-            nn.Conv2d(3, 18, 5), # input: 3 x 256 x 144 -> output: 18 x 254 x 140
-            nn.MaxPool2d(2), # input: 18 x 254 x 140 -> output: 18 x 127 x 69
-            nn.ReLU(),
-            nn.Conv2d(18, 28, 5), # input: 18 x 127 x 69 -> output: 28 x 123 x 65
-            nn.MaxPool2d(3), # input: 28 x 123 x 65 -> output: 28 x 41 x 22
-            nn.ReLU()
-        )
-
-        self.classifier = nn.Sequential(
-            nn.Linear(25256, 12650),
-            nn.ReLU(),
-            nn.Linear(12650, 6330),
-            nn.ReLU(),
-            nn.Linear(6330, 3160),
-            nn.ReLU(),
-            nn.Linear(3160, 15)
-        )
-
-    def forward(self, input):
-        input = self.feature_extractor(input)
-        input = self.classifier(input)
+    
 
 # Command Line parameters are the arguments to our makelist function
 if len(sys.argv) != 6:
@@ -86,9 +56,9 @@ def train_model(model, lr=0.01, epochs=20, momentum=0.9,
     criterion = nn.CrossEntropyLoss()
     optimizer = SGD(model.parameters(), lr, momentum=momentum)
 
-    loaders = {"train": train_loader, "validation": validation_set_loader, "test": test_set_loader}
-    losses = {"train": [], "validation": [], "test": []}
-    accuracies = {"train": [], "validation": [], "test": []}
+    loaders = {"train": train_loader, "test": test_set_loader}
+    losses = {"train": [], "test": []}
+    accuracies = {"train": [], "test": []}
 
     if torch.cuda.is_available():
         model = model.cuda()
