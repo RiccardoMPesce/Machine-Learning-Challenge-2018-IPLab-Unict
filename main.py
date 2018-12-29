@@ -37,11 +37,11 @@ else:
 
 # Instancing variables
 training_set = mlc.MLCDataset("dataset/images", "training_set.csv", transform=mlc.normalization)
-training_set_loader = DataLoader(dataset=training_set, batch_size=32, num_workers=2, shuffle=True)
+training_set_loader = DataLoader(dataset=training_set, batch_size=16, num_workers=2, shuffle=True)
 validation_set = mlc.MLCDataset("dataset/images", "validation_set.csv", transform=mlc.normalization)
-validation_set_loader = DataLoader(dataset=validation_set, batch_size=32, num_workers=2, shuffle=True)
+validation_set_loader = DataLoader(dataset=validation_set, batch_size=16, num_workers=2, shuffle=True)
 test_set = mlc.MLCDataset("dataset/images", "test_set.csv", transform=mlc.normalization)
-test_set_loader = DataLoader(dataset=test_set, batch_size=32, num_workers=2, shuffle=True)
+test_set_loader = DataLoader(dataset=test_set, batch_size=16, num_workers=2, shuffle=True)
 
 def train_model(model, lr=0.01, epochs=20, momentum=0.9,
                 train_loader=training_set_loader,
