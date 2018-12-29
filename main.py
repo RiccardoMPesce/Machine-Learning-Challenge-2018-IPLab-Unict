@@ -94,10 +94,12 @@ def train_model(model, lr=0.01, epochs=20, momentum=0.9,
         model = model.cuda()
 
     for e in range(epochs):
-        for mode in ("train", "validation", "test"):
+        for mode in ["train", "test"]:
             if mode == "train":
+                batch = training_set_loader
                 model.train()
             else:
+                batch = test_set_loader
                 model.eval()
     
             epoch_loss = 0
