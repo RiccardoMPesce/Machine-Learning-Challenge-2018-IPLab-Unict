@@ -9,6 +9,9 @@ import torch
 import makelist
 import sys
 
+# Module containing the ResNet model
+from torchvision.models import resnet
+
 # Module containing the dataset
 import mlcdataset as mlc
 
