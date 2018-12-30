@@ -21,17 +21,6 @@ from sklearn.metrics import accuracy_score
 class Net(nn.Module):
     pass
 
-
-def training_procedure():
-    pass
-
-def validation_procesure():
-    pass 
-
-def test_procedure():
-    pass
-
-
 # Command Line parameters are the arguments to our makelist function
 if len(sys.argv) != 7:
     print "Invalid number of arguments"
