@@ -16,12 +16,13 @@ from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim import SGD
 from torch.autograd import Variable
+
+# Modules for testing accuracy
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import f1_score
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-class Net(nn.Module):
-    pass
 
 # Command Line parameters are the arguments to our makelist function
 if len(sys.argv) != 7:
