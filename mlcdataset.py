@@ -29,11 +29,12 @@ class MLCDataset(Dataset):
         """
 
         self.base_path = base_path
-        self.image_list = [list(row) for row in pd.read_csv(file_list).values]
+        self.image_list = [list(row) for row in pd.read_csv(file_list).values.tolist()]
         self.transform = transform
 
     def __getitem__(self, index):
-        image_name, image_label = self.image_list[index]
+        sample = self.image_list[index]
+        image_name, image_label = sample[0], sample[1]
 
         image_path = path.join(self.base_path, image_name)
         image = Image.open(image_path)
@@ -77,3 +78,6 @@ print mean, std
 normalization = transforms.Compose([transforms.ToTensor(),
                                     transforms.Normalize(mean, std),
                                     transforms.Lambda(lambda x: x.view(-1))])
+
+training_set = MLCDataset("dataset/images", "training_set.csv", transform=normalization)
+training_set_loader = DataLoader(dataset=training_set, batch_size=32, num_workers=2, shuffle=True)
