@@ -14,6 +14,8 @@ from torchvision import transforms
 from PIL import Image
 from os import path
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 class MLCDataset(Dataset):
     """
     Implement the MLCDataset class, so as to use it as a standart torch dataset

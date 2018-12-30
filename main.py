@@ -18,6 +18,8 @@ from torch.optim import SGD
 from torch.autograd import Variable
 from sklearn.metrics import accuracy_score
 
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 class Net(nn.Module):
     pass
 
