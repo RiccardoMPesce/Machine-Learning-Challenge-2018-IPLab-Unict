@@ -76,8 +76,7 @@ print mean, std
 
 # Composing the transform
 normalization = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize(mean, std),
-                                    transforms.Lambda(lambda x: x.view(-1))])
+                                    transforms.Normalize(mean, std),])
 
 training_set = MLCDataset("dataset/images", "training_set.csv", transform=normalization)
 training_set_loader = DataLoader(dataset=training_set, batch_size=32, num_workers=2, shuffle=True)

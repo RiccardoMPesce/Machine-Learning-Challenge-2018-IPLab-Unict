@@ -21,6 +21,17 @@ from sklearn.metrics import accuracy_score
 class Net(nn.Module):
     pass
 
+
+def training_procedure():
+    pass
+
+def validation_procesure():
+    pass 
+
+def test_procedure():
+    pass
+
+
 # Command Line parameters are the arguments to our makelist function
 if len(sys.argv) != 7:
     print "Invalid number of arguments"
@@ -53,72 +64,3 @@ validation_set_loader = DataLoader(dataset=validation_set, batch_size=32, num_wo
 
 test_set = mlc.MLCDataset("dataset/images", "test_set.csv", transform=mlc.normalization)
 test_set_loader = DataLoader(dataset=test_set, batch_size=32, num_workers=2, shuffle=True)
-
-def training_procedure(model, lr=0.01, epochs=20, momentum=0.9, 
-                        train_loader=training_set_loader,
-                        validation_loader=validation_set_loader, 
-                        test_loader=test_set_loader):
-    """
-    Training procedure: it takes the model as input, and returns a tuple
-    whose first element is the model itself, while the second element is 
-    another tuple containing (losses, accuracies), so statistical data
-    """
-
-    criterion = nn.CrossEntropyLoss()
-    optimizer = SGD(model.parameters(), lr, momentum=momentum)
-
-    loaders = {"train": train_loader, "validation": validation_set_loader, "test": test_set_loader}
-    losses = {"train": [], "validation": [], "test": []}
-    accuracies = {"train": [], "validation": [], "test": []}
-
-    if torch.cuda.is_available():
-        model = model.cuda()
-
-    for e in range(epochs):
-        for mode in ["train", "test"]:
-            if mode == "train":
-                batch = training_set_loader
-                model.train()
-            else:
-                batch = test_set_loader
-                model.eval()
-    
-            epoch_loss = 0
-            epoch_accuracy = 0
-            samples = 0
-
-            for i, batch in enumerate(loaders[mode]):
-                # Let's turn tensors into variables
-                x = Variable(batch[0], requires_grad=(mode == "train"))
-                y = Variable(batch[1])
-
-                if torch.cuda.is_available():
-                    x, y = x.cuda(), y.cuda()
-
-                output = model(x)
-                cost = criterion(output, y)
-
-                if mode == "train":
-                    cost.backward()
-                    optimizer.step()
-                    # Preventing gradients to sum
-                    optimizer.zero_grad()
-
-                score = accuracy_score(y.data, output.max(1)[1].data)
-
-                epoch_loss += cost.data[0] * x.shape[0]
-                epoch_accuracy += score * x.shape[0]
-                samples += x.shape[0]
-
-                print "\r[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\t\t\t\t\t" % (mode, e + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy),
-
-    return model, (losses, accuracies)
-
-def validation_procesure():
-    pass 
-
-def test_procedure():
-    pass
-
-net_mlc = Net()
-net_mlc, logs = training_procedure(net_mlc, epochs=100)
