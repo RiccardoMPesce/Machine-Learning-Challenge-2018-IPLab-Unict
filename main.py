@@ -14,9 +14,6 @@ from matplotlib import pyplot as plt
 # Module containing the ResNet model
 from torchvision.models import resnet
 
-# Module containing the dataset
-import mlcdataset as mlc
-
 from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim import SGD
@@ -51,6 +48,9 @@ else:
     call["test_source_path"] = test_source_path
 
     makelist.make_list(**call)
+
+# Module containing the dataset
+import mlcdataset as mlc
 
 # Instancing variables
 training_set = mlc.MLCDataset("dataset/images", "training_set.csv", transform=mlc.normalization)
