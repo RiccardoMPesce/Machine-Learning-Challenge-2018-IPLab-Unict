@@ -23,7 +23,7 @@ class MLCDataset(Dataset):
     Implementa la classe MLCDataset, per utilizzarla su pytorch
     """
 
-    def __init__(self, base_path, file_list, transform=None):
+    def __init__(self, base_path, file_list, test=False, transform=None):
         """
         - base_path: path to the folder containing the sample images
         - file_list: path to the file containing sample labels
@@ -34,9 +34,15 @@ class MLCDataset(Dataset):
         self.image_list = [list(row) for row in pd.read_csv(file_list).values.tolist()]
         self.transform = transform
 
+        # Is in test mode?
+        self.test = test
+
     def __getitem__(self, index):
         sample = self.image_list[index]
-        image_name, image_label = sample[0], sample[1]
+        image_name = sample[0]
+
+        if not self.test:
+            image_label = sample[1]
 
         image_path = path.join(self.base_path, image_name)
         image = Image.open(image_path)
@@ -44,9 +50,11 @@ class MLCDataset(Dataset):
         if self.transform is not None:
             image = self.transform(image)
 
-        image_label = int(image_label)
-
-        return {"image": image, "label": image_label}
+        if not self.test:
+            image_label = int(image_label)
+            return {"image": image, "label": image_label}
+        else:
+            return {"image": image}
 
     def __len__(self):
         return len(self.image_list)
