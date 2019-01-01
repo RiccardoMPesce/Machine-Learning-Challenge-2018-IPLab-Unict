@@ -65,11 +65,35 @@ validation_set_loader = DataLoader(dataset=validation_set, batch_size=BATCH_SIZE
 test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization)
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
-def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS):
+def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
+                loader=training_set_loader):
+    """
+    Training procedure
+    """
+    training_losses = []
+
+    model.train()
+
+    for epoch in range(epochs):
+        epoch_loss = 0
+
+        for i, batch in enumerate(loader):
+            x = Variable(batch[0], requires_grad=True)
+            y = Variable(batch[1])
+
+            output = model(x)
+            loss = criterion(output, y)
+            loss.backward()
+
+            epoch_loss += loss.data[0] * x.shape[0]
+
+            optimizer.step()
+            optimizer.zero_grad()
+
+
+def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
+                validation_loader=validation_set_loader):
     pass
 
-def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS):
-    pass
-
-def test_model(model=resnet_model, epochs=N_EPOCHS):
-    pass
+def train_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
+    pass   
