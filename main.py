@@ -5,9 +5,9 @@
     department marked in the map is returned.
 """
 
+import torch 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-import torch 
 import makelist
 import sys
 
@@ -44,19 +44,26 @@ N_TRAINING_SAMPLES = 1000
 N_VALIDATION_SAMPLES = 250
 N_TEST_SAMPLES = 100
 
+BATCH_SIZE = 32
+N_WORKERS = 2
+
+makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
+                   "dataset/training_list.csv", "dataset/validation_list.csv",
+                   "dataset/testing_list_blind.csv")
+
 resnet_model = resnet.resnet50(pretrained=False)
 criterion = nn.CrossEntropyLoss()
 optimizer = SGD(lr=LR, momentum=M, params=resnet_model.parameters())
 
 # Instancing variables
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
-training_set_loader = DataLoader(dataset=training_set, batch_size=32, num_workers=2, shuffle=True)
+training_set_loader = DataLoader(dataset=training_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 validation_set = mlc.MLCDataset(IMG_PATH, VALIDATION_SET_FILE, transform=mlc.normalization)
-validation_set_loader = DataLoader(dataset=validation_set, batch_size=32, num_workers=2, shuffle=True)
+validation_set_loader = DataLoader(dataset=validation_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization)
-test_set_loader = DataLoader(dataset=test_set, batch_size=32, num_workers=2, shuffle=True)
+test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS):
     pass
@@ -64,5 +71,5 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS):
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS):
     pass
 
-def test_model(model=resnet_model, epochs=):
+def test_model(model=resnet_model, epochs=N_EPOCHS):
     pass
