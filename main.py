@@ -47,11 +47,13 @@ N_TEST_SAMPLES = 100
 BATCH_SIZE = 32
 N_WORKERS = 2
 
+PRINT_EVERY = 100
+
 makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
                    "dataset/testing_list_blind.csv")
 
-resnet_model = resnet.resnet50(pretrained=False)
+resnet_model = resnet.resnet18(pretrained=False)
 criterion = nn.CrossEntropyLoss()
 optimizer = SGD(lr=LR, momentum=M, params=resnet_model.parameters())
 
@@ -66,34 +68,20 @@ test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization)
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
-                loader=training_set_loader):
+                loader=training_set_loader, print_every=PRINT_EVERY):
     """
     Training procedure
     """
-    training_losses = []
+    losses = []
+    accuracies = []
 
-    model.train()
+    return model, losses
 
-    for epoch in range(epochs):
-        epoch_loss = 0
-
-        for i, batch in enumerate(loader):
-            x = Variable(batch[0], requires_grad=True)
-            y = Variable(batch[1])
-
-            output = model(x)
-            loss = criterion(output, y)
-            loss.backward()
-
-            epoch_loss += loss.data[0] * x.shape[0]
-
-            optimizer.step()
-            optimizer.zero_grad()
-
-
-def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
+def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
                 validation_loader=validation_set_loader):
     pass
 
-def train_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
+def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
     pass   
+
+# resnet_model, resnet_model_log = train_model()
