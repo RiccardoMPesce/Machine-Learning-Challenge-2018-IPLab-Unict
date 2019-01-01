@@ -85,5 +85,7 @@ print mean, std
 """
 
 # Composing the transform
-normalization = transforms.Compose([transforms.ToTensor(),
-                                    transforms.Normalize(mean, std),])
+normalization = transforms.Compose([transforms.CenterCrop(224),
+                                    transforms.ToTensor(),
+                                    transforms.Normalize(mean, std)
+                                    ])

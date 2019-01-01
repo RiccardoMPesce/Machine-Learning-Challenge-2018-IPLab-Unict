@@ -47,7 +47,7 @@ N_TEST_SAMPLES = 100
 BATCH_SIZE = 32
 N_WORKERS = 2
 
-PRINT_EVERY = 100
+PRINT_EVERY = 10 
 
 makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
@@ -73,9 +73,35 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
     Training procedure
     """
     losses = []
-    accuracies = []
+
+    model.train()
+
+    for epoch in range(epochs):
+        epoch_loss = 0
+
+        for i, batch in enumerate(loader):
+            x = Variable(batch["image"], requires_grad=True)
+            y = Variable(batch["label"])
+
+            output = model(x)
+            loss = criterion(output, y)
+            loss.backward()
+
+            epoch_loss += loss.data.item() * x.shape[0]
+
+            optimizer.step()
+            optimizer.zero_grad()
+
+        epoch_loss /= len(loader.dataset)
+
+        losses.append(epoch_loss)
+
+        if epoch % print_every == 0:
+            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %0.2f." \
+            % (epoch + 1, epochs, i, len(loader), epoch_loss)
 
     return model, losses
+
 
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
                 validation_loader=validation_set_loader):
@@ -84,4 +110,6 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
     pass   
 
-# resnet_model, resnet_model_log = train_model()
+resnet_model, resnet_model_log = train_model()
+
+print training_set_loader.dataset[1]["image"].shape
