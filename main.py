@@ -20,7 +20,6 @@ from torchvision.models import resnet
 from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim import SGD
-from torch.optim import Adam
 from torch.autograd import Variable
 
 # Modules for testing accuracy
@@ -31,7 +30,7 @@ from sklearn.metrics import f1_score
 # Constants used throughout the code 
 LR = 0.01
 M = 0.99
-N_EPOCHS = 50
+N_EPOCHS = 20
 
 IMG_PATH = "dataset/images"
 
@@ -48,7 +47,7 @@ N_TEST_SAMPLES = 100
 BATCH_SIZE = 32
 N_WORKERS = 2
 
-PRINT_EVERY = 10 
+PRINT_EVERY = 1
 
 makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
@@ -57,8 +56,8 @@ makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
 kwargs = {"num_classes": 16}
 
 resnet_model = resnet.resnet18(pretrained=False, **kwargs)
-criterion = nn.MultiLabelSoftMarginLoss()
-optimizer = Adam(params=resnet_model.parameters())
+criterion = nn.CrossEntropyLoss()
+optimizer = SGD(lr=LR, momentum=M, params=resnet_model.parameters())
 
 # Instancing variables
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
