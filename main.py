@@ -39,11 +39,11 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 4000
-N_VALIDATION_SAMPLES = 1000
-N_TEST_SAMPLES = 2000
+N_TRAINING_SAMPLES = 100
+N_VALIDATION_SAMPLES = 20
+N_TEST_SAMPLES = 30
 
-BATCH_SIZE = 128
+BATCH_SIZE = 8
 N_WORKERS = 4
 
 PRINT_EVERY = 1
@@ -168,3 +168,4 @@ def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader)
     pass   
 
 resnet_model, resnet_model_log = train_model()
+validated_model, validation_log = validate_model(resnet_model)
