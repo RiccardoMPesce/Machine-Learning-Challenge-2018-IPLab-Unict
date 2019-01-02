@@ -40,11 +40,11 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 100
-N_VALIDATION_SAMPLES = 20
-N_TEST_SAMPLES = 30
+N_TRAINING_SAMPLES = 50
+N_VALIDATION_SAMPLES = 10
+N_TEST_SAMPLES = 20
 
-BATCH_SIZE = 8
+BATCH_SIZE = 1
 N_WORKERS = 4
 
 PRINT_EVERY = 1
@@ -139,7 +139,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
             output = model(x)
 
-            np_output = output.data.cpu(),numpy()
+            np_output = output.data.cpu().numpy()
             preds = np.insert(preds, np_output)
 
             loss = criterion(output, y)
