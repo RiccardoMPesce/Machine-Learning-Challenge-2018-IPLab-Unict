@@ -29,7 +29,7 @@ from sklearn.metrics import f1_score
 # Constants used throughout the code 
 LR = 0.01
 M = 0.99
-N_EPOCHS = 20
+N_EPOCHS = 100
 
 IMG_PATH = "dataset/images"
 
@@ -41,10 +41,10 @@ PREDICTIONS_FILE = "predictions.csv"
 
 N_TRAINING_SAMPLES = 1000
 N_VALIDATION_SAMPLES = 250
-N_TEST_SAMPLES = 100
+N_TEST_SAMPLES = 1000
 
-BATCH_SIZE = 32
-N_WORKERS = 2
+BATCH_SIZE = 64
+N_WORKERS = 4
 
 PRINT_EVERY = 1
 
@@ -105,8 +105,8 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
         losses.append(epoch_loss)
 
         if epoch % print_every == 0:
-            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %0.2f." \
-            % (epoch + 1, epochs, i, len(loader), epoch_loss)
+            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f." \
+            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss)
 
     return model, losses
 
@@ -119,5 +119,3 @@ def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader)
     pass   
 
 resnet_model, resnet_model_log = train_model()
-
-print training_set_loader.dataset[1]["image"].shape
