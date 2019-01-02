@@ -126,6 +126,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
     if torch.cuda.is_available():
         model = model.cuda()
+        Y, preds = Y.cuda(), preds.cuda()
 
     model.eval()
 
@@ -136,6 +137,9 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         for i, batch in enumerate(loader):
             x = Variable(batch["image"], requires_grad=False)
             y = Variable(batch["label"], requires_grad=False)
+
+            if torch.cuda.is_available():
+                x, y = x.cuda(), y.cuda()
 
             output = model(x)
 
