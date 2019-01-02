@@ -69,7 +69,7 @@ test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization)
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
-                loader=training_set, print_every=PRINT_EVERY):
+                loader=training_set_loader, print_every=PRINT_EVERY):
     """
     Training procedure
     """
@@ -117,12 +117,12 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
 
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
-                loader=validation_set):
+                loader=validation_set_loader):
     losses = []
     accuracies = []
-    f1_scores = []
-    confusion_matrices = []
-    mf1s = []
+
+    Y = []
+    preds = []
 
     if torch.cuda.is_available():
         model = model.cuda()
@@ -132,9 +132,6 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
     for epoch in range(epochs):
         epoch_loss = 0.0
         epoch_accuracy = 0.0
-        epoch_f1_score = 0.0
-        epoch_mf1 = 0.0
-        epoch_confusion_matrix = []
 
         for i, batch in enumerate(loader):
             x = Variable(batch[0], requires_grad=False)
@@ -142,12 +139,13 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
             output = model(x)
 
+            Y.append(y)
+            preds.append(output)    
+
             loss = criterion(output, y)
 
             epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data) * x.shape[0]
             epoch_loss += loss.data.item() * x.shape[0]
-            epoch_f1_score = f1_score(y, output, average=None)
-            epoch_mf1 = epoch_f1_score.mean()
 
         epoch_loss /= len(loader)
         epoch_accuracy /= len(loader)
@@ -155,10 +153,18 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
                 (epoch + 1, epochs, i, len(loader), epoch_loss, epoch_accuracy)
 
-    return model, {"losses": losses, "accuracies": accuracies, "f1_scores": f1_scores, 
-                   "confusion_matrices": confusion_matrices, "mf1s": mf1s}
+    f1 = f1_score(Y, preds, average=None)
+    cm = confusion_matrix(Y, preds)
+    mf1s = f1.mean()
 
-def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set):
+    print "Confusion Matrix: " + cm
+    print "F1: " + f1 
+    print "mF1: " + mf1s
+
+    return model, {"losses": losses, "accuracies": accuracies, "f1_score": f1, 
+                   "confusion_matrix": cm, "mf1s": mf1s}
+
+def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
     pass   
 
 resnet_model, resnet_model_log = train_model()
