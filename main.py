@@ -103,8 +103,8 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
             optimizer.step()
 
-        epoch_loss /= len(loader)
-        epoch_accuracy /= len(loader)
+        epoch_loss /= len(loader.dataset)
+        epoch_accuracy /= len(loader.dataset)
 
         losses.append(epoch_loss)
         accuracies.append(epoch_accuracy)
