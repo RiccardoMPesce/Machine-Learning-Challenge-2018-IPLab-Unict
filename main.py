@@ -121,12 +121,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
     losses = []
     accuracies = []
 
-    Y = []
-    preds = []
-
-    if torch.cuda.is_available():
-        model = model.cuda()
-        Y, preds = Y.cuda(), preds.cuda()
+    preds = torch.Tensor([])
 
     model.eval()
 
@@ -139,12 +134,11 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
             y = Variable(batch["label"], requires_grad=False)
 
             if torch.cuda.is_available():
-                x, y = x.cuda(), y.cuda()
+                x, y, preds = x.cuda(), y.cuda(), preds.cuda()
 
             output = model(x)
 
-            Y.append(y)
-            preds.append(output)    
+            torch.cat(preds, output)  
 
             loss = criterion(output, y)
 
@@ -157,8 +151,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
                 (epoch + 1, epochs, i, len(loader), epoch_loss, epoch_accuracy)
 
-    f1 = f1_score(Y, preds, average=None)
-    cm = confusion_matrix(Y, preds)
+    f1 = f1_score(y, preds, average=None)
+    cm = confusion_matrix(y, preds)
     mf1s = f1.mean()
 
     print "Confusion Matrix: " + cm
