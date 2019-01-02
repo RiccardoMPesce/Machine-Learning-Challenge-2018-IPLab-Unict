@@ -85,6 +85,9 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
             x = Variable(batch["image"], requires_grad=True)
             y = Variable(batch["label"])
 
+            if torch.cuda.is_available():
+                x, y = x.cuda(), y.cuda()
+
             optimizer.zero_grad()
 
             output = model(x)
