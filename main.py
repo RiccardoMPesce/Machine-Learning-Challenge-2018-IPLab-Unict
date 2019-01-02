@@ -134,8 +134,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         epoch_accuracy = 0.0
 
         for i, batch in enumerate(loader):
-            x = Variable(batch[0], requires_grad=False)
-            y = Variable(batch[1], requires_grad=False)
+            x = Variable(batch["image"], requires_grad=False)
+            y = Variable(batch["label"], requires_grad=False)
 
             output = model(x)
 
