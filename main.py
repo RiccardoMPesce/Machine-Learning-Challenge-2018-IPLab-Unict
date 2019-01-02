@@ -30,7 +30,7 @@ from sklearn.metrics import f1_score
 # Constants used throughout the code 
 LR = 0.01
 M = 0.99
-N_EPOCHS = 100
+N_EPOCHS = 50
 
 IMG_PATH = "dataset/images"
 
@@ -140,7 +140,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
             output = model(x)
 
             np_output = output.data.cpu().numpy()
-            preds = np.insert(preds, np_output)
+            preds = np.insert(preds, -1, np_output)
 
             loss = criterion(output, y)
 
