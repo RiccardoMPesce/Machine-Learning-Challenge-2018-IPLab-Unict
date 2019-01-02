@@ -5,8 +5,7 @@
     department marked in the map is returned.
 """
 
-import torch 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+import torch
 
 import makelist
 import sys
@@ -75,6 +74,9 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
     Training procedure
     """
     losses = []
+
+    if torch.cuda.is_available():
+        model = model.cuda()
 
     model.train()
 
