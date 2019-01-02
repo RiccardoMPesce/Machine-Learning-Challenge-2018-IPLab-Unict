@@ -69,7 +69,7 @@ test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization)
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
-                loader=training_set_loader, print_every=PRINT_EVERY):
+                loader=training_set, print_every=PRINT_EVERY):
     """
     Training procedure
     """
@@ -117,7 +117,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
 
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
-                loader=validation_set_loader):
+                loader=validation_set):
     losses = []
     accuracies = []
     f1_scores = []
@@ -158,7 +158,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
     return model, {"losses": losses, "accuracies": accuracies, "f1_scores": f1_scores, 
                    "confusion_matrices": confusion_matrices, "mf1s": mf1s}
 
-def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
+def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set):
     pass   
 
 resnet_model, resnet_model_log = train_model()
