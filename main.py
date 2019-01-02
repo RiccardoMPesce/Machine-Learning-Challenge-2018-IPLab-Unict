@@ -98,8 +98,8 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
             loss = criterion(output, y)
             loss.backward()
 
-            epoch_loss += loss.data.mean()
-            epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data).mean()
+            epoch_loss += loss.data[0] * x.shape[0]
+            epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data) * x.shape[0]
 
             optimizer.step()
 
@@ -110,15 +110,23 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
         accuracies.append(epoch_accuracy)
 
         if epoch % print_every == 0:
-            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f. Accuracy: %.5f" \
+            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.2f. Accuracy: %.2f" \
             % (epoch + 1, epochs, i + 1, len(loader), epoch_loss, epoch_accuracy)
 
-    return model, (losses, accuracies)
+    return model, {"losses": losses, "accuracies": accuracies}
 
 
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
                 validation_loader=validation_set_loader):
-    pass
+    losses = []
+    accuracies = []
+
+    if torch.cuda.is_available():
+        model = model.cuda()
+
+    model.train()
+
+    return model, {"losses": losses, "accuracies": accuracies, "f1_scores": f1_scores, "confusion_matrix": confusion_matrix}
 
 def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
     pass   
