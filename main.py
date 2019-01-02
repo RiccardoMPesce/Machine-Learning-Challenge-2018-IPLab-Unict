@@ -139,7 +139,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
             output = model(x)
 
-            preds = np.insert(preds, output.data.numpy())
+            np_output = output.data.cpu(),numpy()
+            preds = np.insert(preds, np_output)
 
             loss = criterion(output, y)
 
