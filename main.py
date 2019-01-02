@@ -99,7 +99,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
             loss.backward()
 
             epoch_loss += loss.data.mean()
-            epoch_accuracy += accuracy_score(y, output.max(1)[1])
+            epoch_accuracy += accuracy_score(y, output)
 
             optimizer.step()
 
@@ -110,8 +110,8 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
         accuracies.append(epoch_accuracy)
 
         if epoch % print_every == 0:
-            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f. Accuracy: %.5f" \
-            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss, epoch_accuracy)
+            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f. Accuracy: %.5f%" \
+            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss, epoch_accuracy * 100)
 
     return model, (losses, accuracies)
 
