@@ -103,8 +103,8 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
             optimizer.step()
 
-        epoch_loss /= len(loader.dataset)
-        epoch_accuracy /= len(loader.dataset)
+        epoch_loss /= len(loader)
+        epoch_accuracy /= len(loader)
 
         losses.append(epoch_loss)
         accuracies.append(epoch_accuracy)
@@ -145,11 +145,12 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
             loss = criterion(output, y)
 
             epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data) * x.shape[0]
-            epoch_loss += loss.data[0] * x.shape[0]
+            epoch_loss += loss.data.item() * x.shape[0]
             epoch_f1_score = f1_score(y, output, average=None)
             epoch_mf1 = epoch_f1_score.mean()
 
         epoch_loss /= len(loader)
+        epoch_accuracy /= len(loader)
 
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
                 (epoch + 1, epochs, i, len(loader), epoch_loss, epoch_accuracy)
