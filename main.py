@@ -20,6 +20,7 @@ from torchvision.models import resnet
 from torch import nn
 from torch.utils.data import DataLoader
 from torch.optim import SGD
+from torch.optim import Adam
 from torch.autograd import Variable
 
 # Modules for testing accuracy
@@ -56,8 +57,8 @@ makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
 kwargs = {"num_classes": 16}
 
 resnet_model = resnet.resnet18(pretrained=False, **kwargs)
-criterion = nn.CrossEntropyLoss()
-optimizer = SGD(lr=LR, momentum=M, params=resnet_model.parameters())
+criterion = nn.MultiLabelSoftMarginLoss()
+optimizer = Adam(lr=LR, momentum=M, params=resnet_model.parameters())
 
 # Instancing variables
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
@@ -79,20 +80,21 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
     model.train()
 
     for epoch in range(epochs):
-        epoch_loss = 0
+        epoch_loss = 0.0
 
         for i, batch in enumerate(loader):
             x = Variable(batch["image"], requires_grad=True)
             y = Variable(batch["label"])
 
+            optimizer.zero_grad()
+
             output = model(x)
             loss = criterion(output, y)
             loss.backward()
 
-            epoch_loss += loss.data.item() * x.shape[0]
+            epoch_loss += loss.data.mean()
 
             optimizer.step()
-            optimizer.zero_grad()
 
         epoch_loss /= len(loader.dataset)
 
