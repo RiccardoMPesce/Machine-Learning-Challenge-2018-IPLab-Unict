@@ -39,11 +39,11 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 1000
-N_VALIDATION_SAMPLES = 250
-N_TEST_SAMPLES = 1000
+N_TRAINING_SAMPLES = 4000
+N_VALIDATION_SAMPLES = 1000
+N_TEST_SAMPLES = 2000
 
-BATCH_SIZE = 64
+BATCH_SIZE = 128
 N_WORKERS = 4
 
 PRINT_EVERY = 1
@@ -99,7 +99,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
             loss.backward()
 
             epoch_loss += loss.data.mean()
-            epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data)
+            epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data).mean()
 
             optimizer.step()
 
@@ -111,7 +111,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
         if epoch % print_every == 0:
             print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f. Accuracy: %.5f" \
-            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss, epoch_accuracy * 100)
+            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss, epoch_accuracy)
 
     return model, (losses, accuracies)
 
