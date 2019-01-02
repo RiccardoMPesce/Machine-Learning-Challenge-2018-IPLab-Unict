@@ -151,8 +151,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
         epoch_loss /= len(loader)
 
-            print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-                    (epoch + 1, epochs, i, len(loader), epoch_loss, epoch_accuracy)
+        print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+                (epoch + 1, epochs, i, len(loader), epoch_loss, epoch_accuracy)
 
     return model, {"losses": losses, "accuracies": accuracies, "f1_scores": f1_scores, 
                    "confusion_matrices": confusion_matrices, "mf1s": mf1s}
