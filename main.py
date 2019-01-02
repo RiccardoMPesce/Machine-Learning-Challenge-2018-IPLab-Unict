@@ -99,7 +99,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
             loss.backward()
 
             epoch_loss += loss.data.mean()
-            epoch_accuracy += accuracy_score(y, output.max(1)[1])
+            epoch_accuracy += accuracy_score(y, output.max(1)[0])
 
             optimizer.step()
 
