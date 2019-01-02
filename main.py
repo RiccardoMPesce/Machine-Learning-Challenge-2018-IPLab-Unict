@@ -53,7 +53,9 @@ makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
                    "dataset/testing_list_blind.csv")
 
-resnet_model = resnet.resnet18(pretrained=False)
+kwargs = {"num_classes": 16}
+
+resnet_model = resnet.resnet18(pretrained=False, **kwargs)
 criterion = nn.CrossEntropyLoss()
 optimizer = SGD(lr=LR, momentum=M, params=resnet_model.parameters())
 
