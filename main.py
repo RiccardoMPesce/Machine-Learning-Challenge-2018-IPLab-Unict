@@ -58,7 +58,7 @@ kwargs = {"num_classes": 16}
 
 resnet_model = resnet.resnet18(pretrained=False, **kwargs)
 criterion = nn.MultiLabelSoftMarginLoss()
-optimizer = Adam(lr=LR, momentum=M, params=resnet_model.parameters())
+optimizer = Adam(params=resnet_model.parameters())
 
 # Instancing variables
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
