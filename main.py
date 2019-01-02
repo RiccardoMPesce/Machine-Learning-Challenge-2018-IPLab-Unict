@@ -74,6 +74,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
     Training procedure
     """
     losses = []
+    accuracies = []
 
     if torch.cuda.is_available():
         model = model.cuda()
@@ -82,6 +83,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
     for epoch in range(epochs):
         epoch_loss = 0.0
+        epoch_accuracy = 0.0
 
         for i, batch in enumerate(loader):
             x = Variable(batch["image"], requires_grad=True)
@@ -97,18 +99,21 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
             loss.backward()
 
             epoch_loss += loss.data.mean()
+            epoch_accuracy += accuracy_score(y, output).mean()
 
             optimizer.step()
 
         epoch_loss /= len(loader.dataset)
+        epoch_accuracy /= len(loader.dataset)
 
         losses.append(epoch_loss)
+        accuracies.append(epoch_accuracy)
 
         if epoch % print_every == 0:
-            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f." \
-            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss)
+            print "(Training) Epoch: %d/%d. Iteration: %d/%d. Loss: %.5f. Accuracy: %.5f" \
+            % (epoch + 1, epochs, i + 1, len(loader), epoch_loss, epoch_accuracy)
 
-    return model, losses
+    return model, (losses, accuracies)
 
 
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
