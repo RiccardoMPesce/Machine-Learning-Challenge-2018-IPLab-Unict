@@ -95,8 +95,8 @@ for e in range(epochs):
     train_acc = 0
     for i, batch in enumerate(training_set_loader):
         #trasformiamo i tensori in variabili
-        x=Variable(batch[0])
-        y=Variable(batch[1])
+        x = Variable(batch["image"])
+        y = Variable(batch["label"])
         output = model(x)
         l = criterion(output,y)
         l.backward()
@@ -106,11 +106,11 @@ for e in range(epochs):
         #accumuliamo i valori di training e loss
         #moltiplichiamo per x.shape[0], che restituisce la dimensione
         #del batch corrente.
-        train_loss+=l.data[0]*x.shape[0]
-        train_acc+=acc*x.shape[0]
+        train_loss += l.data[0] * x.shape[0]
+        train_acc += acc * x.shape[0]
 
         print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-        (e+1, epochs, i, len(training_set_loader), l.data[0], acc),
+        (e + 1, epochs, i, len(training_set_loader), l.data[0], acc),
 
         optimizer.step() #sostituisce il codice di aggiornamento manuale dei parametri
         optimizer.zero_grad() #sostituisce il codice che si occupava di azzerare i gradienti
@@ -122,32 +122,32 @@ for e in range(epochs):
     training_accuracies.append(train_acc)
 
     print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-    (e+1, epochs, i, len(training_set_loader), train_loss, train_acc)
+    (e + 1, epochs, i, len(training_set_loader), train_loss, train_acc)
     #ciclo di test
     model.eval()
-    test_acc=0
-    test_loss=0
+    test_acc = 0
+    test_loss = 0
     for i, batch in enumerate(test_set_loader):
     #trasformiamo i tensori in variabili
-        x=Variable(batch[0], requires_grad=False)
-        y=Variable(batch[1], requires_grad=False)
+        x = Variable(batch["image"], requires_grad=False)
+        y = Variable(batch["label"], requires_grad=False)
         output = model(x)
         l = criterion(output,y)
 
-        test_acc += accuracy_score(y.data,output.max(1)[1].data)*x.shape[0]
-        test_loss += l.data[0]*x.shape[0]
+        test_acc += accuracy_score(y.data,output.max(1)[1].data) * x.shape[0]
+        test_loss += l.data[0] * x.shape[0]
 
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-        (e+1,epochs,i,len(training_set_loader),l.data[0],acc),
+        (e + 1, epochs, i, len(training_set_loader), l.data[0], acc),
 
     #salviamo il modello
     torch.save(model.state_dict(),'model-%d.pth'%(e+1,))
 
-    test_loss/=len(test_set)
-    test_acc/=len(test_set)
+    test_loss /= len(test_set)
+    test_acc /= len(test_set)
     
     test_losses.append(test_loss)
     test_accuracies.append(test_acc)
 
     print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-    (e+1,epochs,i,len(test_set_loader),test_loss,test_acc)
+    (e + 1, epochs, i, len(test_set_loader), test_loss, test_acc)
