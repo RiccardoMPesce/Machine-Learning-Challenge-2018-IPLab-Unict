@@ -70,84 +70,61 @@ validation_set_loader = DataLoader(dataset=validation_set, batch_size=BATCH_SIZE
 test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization, test=True)
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
-# resnet_model, resnet_model_log = train_model()
-# validated_model, validation_log = validate_model(resnet_model)
+def train_model(model=resnet_model, lr=LR, epochs=N_EPOCHS, momentum=M, 
+                training_loader=training_set_loader,test_loader=test_set_loader,
+                criterion=criterion, optimizer=optimizer):
+    loaders = {"training": training_loader, "test": test_loader}
+    losses = {"training": [], "test": []}
+    accuracies = {"training": [], "test": []}
 
-model = resnet_model
-epochs = N_EPOCHS
-lr = LR
+    if torch.cuda.is_available():
+        model = model.cuda()
 
-criterion = nn.CrossEntropyLoss()
-#l'optimizer ci permetterà di effettuare la Stochastic Gradient Descent
-#####################################################
-#Specifichiamo un momentum pari a 0.9
-optimizer = SGD(model.parameters(), lr, momentum=M)
-#####################################################
-training_losses = []
-training_accuracies = []
-test_losses = []
-test_accuracies = []
+    for epoch in range(epochs):
+        for mode in ["training", "test"]:
+            if mode == "training":
+                model.train()
+            else:
+                model.eval()
 
-for e in range(epochs):
-    #ciclo di training
-    model.train()
-    train_loss = 0
-    train_acc = 0
-    for i, batch in enumerate(training_set_loader):
-        #trasformiamo i tensori in variabili
-        x = Variable(batch["image"])
-        y = Variable(batch["label"])
-        output = model(x)
-        l = criterion(output,y)
-        l.backward()
+            epoch_loss = 0
+            epoch_accuracy = 0
+            samples = 0
 
-        acc = accuracy_score(y.data,output.max(1)[1].data)
+            for i, batch in enumerate(loaders[mode]):
+                x = Variable(batch["image"], requires_grad=(mode == "training"))
+                y = Variable(batch["label"])
 
-        #accumuliamo i valori di training e loss
-        #moltiplichiamo per x.shape[0], che restituisce la dimensione
-        #del batch corrente.
-        train_loss += l.data.item() * x.shape[0]
-        train_acc += acc * x.shape[0]
+                if torch.cuda.is_available():
+                    x, y = x.cuda(), y.cuda()
 
-        print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-        (e + 1, epochs, i, len(training_set_loader), l.data.item(), acc),
+                output = model(x)
+                loss = criterion(output, y)
 
-        optimizer.step() #sostituisce il codice di aggiornamento manuale dei parametri
-        optimizer.zero_grad() #sostituisce il codice che si occupava di azzerare i gradienti
+                if mode == "training":
+                    loss.backward()
+                    optimizer.step()
+                    optimizer.zero_grad()
 
-    train_loss /= len(training_set)
-    train_acc /= len(training_set)
+                accuracy = accuracy_score(y.data, output.max(1)[1].data)
 
-    training_losses.append(train_loss)
-    training_accuracies.append(train_acc)
+                epoch_loss += l.data[0] * x.shape[0]
+                epoch_accuracy += accuracy * x.shape[0]
 
-    print "[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
-    (e + 1, epochs, i, len(training_set_loader), train_loss, train_acc)
-    #ciclo di test
-    model.eval()
-    test_acc = 0
-    test_loss = 0
-    for i, batch in enumerate(validation_set_loader):
-    #trasformiamo i tensori in variabili
-        x = Variable(batch["image"], requires_grad=False)
-        y = Variable(batch["label"], requires_grad=False)
-        output = model(x)
-        l = criterion(output,y)
+                samples += x.shape[0]
 
-        test_acc += accuracy_score(y.data,output.max(1)[1].data) * x.shape[0]
-        test_loss += l.data.item() * x.shape[0]
+                print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
+                    (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss / samples, epoch_accuracy / samples)
 
-        print "[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
-        (e + 1, epochs, i, len(validation_set_loader), l.data.item(), acc),
+            epoch_loss /= samples 
+            epoch_accuracy /= samples
 
-    #salviamo il modello
-    torch.save(model.state_dict(),'model-%d.pth'%(e+1,))
+            losses[mode].append(epoch_loss)
+            accuracies[mode].append(epoch_accuracy)
 
-    test_loss /= len(validation_set)
-    test_acc /= len(validation_set)
-    
-    test_losses.append(test_loss)
-    test_accuracies.append(test_acc)
+            print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
+                    (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
 
-    print "[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
-    (e + 1, epochs, i, len(test_set_loader), test_loss, test_acc)
+    return model, (losses, accuracies)
+
+resnet_model, logs = train_model()
