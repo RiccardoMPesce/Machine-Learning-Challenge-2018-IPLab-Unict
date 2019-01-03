@@ -35,9 +35,9 @@ N_EPOCHS = 25
 
 IMG_PATH = "dataset/images"
 
-TRAINING_SET_FILE = "dataset/training_list.csv"
-VALIDATION_SET_FILE = "dataset/training_list.csv"
-TEST_SET_FILE = "dataset/testing_list_blind.csv"
+TRAINING_SET_FILE = "training_set.csv"
+VALIDATION_SET_FILE = "validation_set.csv"
+TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
@@ -46,13 +46,13 @@ N_VALIDATION_SAMPLES = -1
 N_TEST_SAMPLES = -1
 
 BATCH_SIZE = 32
-N_WORKERS = 2
+N_WORKERS = 4
 
 PRINT_EVERY = 1
 
-""" makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
+makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
-                   "dataset/testing_list_blind.csv") """
+                   "dataset/testing_list_blind.csv")
 
 kwargs = {"num_classes": 16}
 

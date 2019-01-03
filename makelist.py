@@ -16,24 +16,35 @@ def make_list(training_samples, validation_samples, test_samples,
     validation_list = [list(row) for row in pd.read_csv(validation_source_path).values.tolist()]
     test_list = [list(row) for row in pd.read_csv(test_source_path).values.tolist()]
 
-    training_samples = len(training_list) if training_samples > len(training_list) or training_samples <= 0 else training_samples
-    validation_samples = len(validation_list) if validation_samples > len(validation_list) or validation_samples <= 0 else validation_samples
-    test_samples = len(test_list) if test_samples > len(test_list) or test_samples <= 0 else test_samples
-
     with open("training_set.csv", "w") as training:
-        for i in range(training_samples):
+        if training_samples <= 0 or training_samples > len(training_list):
             shuffle(training_list)
-            temp = training_list.pop(0)
-            training.write(temp[0] + ", " + str(temp[-1]) + "\n")
+            for temp in training_samples:
+                training.write(temp[0] + ", " + str(temp[-1]) + "\n")
+        else:
+            for i in range(training_samples):
+                shuffle(training_list)
+                temp = training_list.pop(0)
+                training.write(temp[0] + ", " + str(temp[-1]) + "\n")
     
     with open("validation_set.csv", "w") as validation:
-        for i in range(validation_samples):
+        if validation_samples <= 0 or validation_samples > len(validation_list):
             shuffle(validation_list)
-            temp = training_list.pop(0)
-            validation.write(temp[0] + ", " + str(temp[-1]) + "\n")
+            for temp in validation_list:
+                validation.write(temp[0] + ", " + str(temp[-1]) + "\n")
+        else:
+            for i in range(validation_samples):
+                shuffle(validation_list)
+                temp = validation_list.pop(0)
+                validation.write(temp[0] + ", " + str(temp[-1]) + "\n")
 
     with open("test_set.csv", "w") as test:
-        for i in range(test_samples):
+        if test_samples <= 0 or test_samples > len(test_list):
             shuffle(test_list)
-            temp = test_list.pop(0)
-            test.write(temp[0] + "\n")
+            for temp in test_list:
+                test.write(temp[0] + ", " + str(temp[-1]) + "\n")
+        else:
+            for i in range(test_samples):
+                shuffle(test_list)
+                temp = test_list.pop(0)
+                test.write(temp[0] + "\n")
