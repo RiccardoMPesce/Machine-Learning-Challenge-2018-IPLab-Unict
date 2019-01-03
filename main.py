@@ -41,9 +41,9 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 50
-N_VALIDATION_SAMPLES = 10
-N_TEST_SAMPLES = 20
+N_TRAINING_SAMPLES = 20
+N_VALIDATION_SAMPLES = 5
+N_TEST_SAMPLES = 10
 
 BATCH_SIZE = 1
 N_WORKERS = 4
@@ -92,6 +92,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
         for i, batch in enumerate(loader):
             x = Variable(batch["image"], requires_grad=True)
             y = Variable(batch["label"])
+            print "On " + batch["image_name"]
 
             if torch.cuda.is_available():
                 x, y = x.cuda(), y.cuda()
@@ -142,6 +143,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         for i, batch in enumerate(loader):
             x = Variable(batch["image"], requires_grad=False)
             y = Variable(batch["label"], requires_grad=False)
+
+            print "On " + batch["image_name"]
 
             if torch.cuda.is_available():
                 x, y = x.cuda(), y.cuda()

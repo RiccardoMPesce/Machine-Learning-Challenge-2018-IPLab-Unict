@@ -50,9 +50,9 @@ class MLCDataset(Dataset):
 
         if not self.test:
             image_label = int(image_label)
-            return {"image": image, "label": image_label}
+            return {"image": image, "label": image_label, "file": image_name}
         else:
-            return {"image": image}
+            return {"image": image, "file": image_name}
 
     def __len__(self):
         return len(self.image_list)
