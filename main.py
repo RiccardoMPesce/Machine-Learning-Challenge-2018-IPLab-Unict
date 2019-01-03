@@ -35,9 +35,9 @@ N_EPOCHS = 25
 
 IMG_PATH = "dataset/images"
 
-TRAINING_SET_FILE = "training_set.csv"
-VALIDATION_SET_FILE = "validation_set.csv"
-TEST_SET_FILE = "test_set.csv"
+TRAINING_SET_FILE = "dataset/training_list.csv"
+VALIDATION_SET_FILE = "dataset/training_list.csv"
+TEST_SET_FILE = "dataset/testing_list_blind.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
