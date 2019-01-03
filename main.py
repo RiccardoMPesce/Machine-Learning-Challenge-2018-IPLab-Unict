@@ -129,7 +129,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
     losses = []
     accuracies = []
 
-    preds = np.array([])
+    preds = []
 
     model.eval()
 
@@ -160,7 +160,9 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
                 (epoch + 1, epochs, i, len(loader), epoch_loss, epoch_accuracy)
 
-    preds = torch.from_numpy(preds)
+    preds = torch.Tensor(preds)
+    if torch.cuda.is_available():
+        preds = preds.cuda()
 
     f1 = f1_score(y, preds, average=None)
     cm = confusion_matrix(y, preds)
