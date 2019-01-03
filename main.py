@@ -31,7 +31,7 @@ from sklearn.metrics import f1_score
 # Costanti determinanti le dimensioni e gli iperparametri
 LR = 0.01
 M = 0.99
-N_EPOCHS = 20
+N_EPOCHS = 50
 
 IMG_PATH = "dataset/images"
 
@@ -46,7 +46,7 @@ N_VALIDATION_SAMPLES = 20
 N_TEST_SAMPLES = 20
 
 BATCH_SIZE = 1
-N_WORKERS = 2
+N_WORKERS = 3
 
 PRINT_EVERY = 1
 
@@ -165,8 +165,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
     if torch.cuda.is_available():
         preds = preds.cuda()
 
-    f1 = f1_score(y.numpy(), preds.numpy(), average=None)
-    cm = confusion_matrix(y, preds)
+    f1 = f1_score(y.cpu().numpy(), preds.cpu().numpy(), average=None)
+    cm = confusion_matrix(y.cpu().numpy(), preds.cpu().numpy())
     mf1s = f1.mean()
 
     print "Confusion Matrix: " + cm
