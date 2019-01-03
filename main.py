@@ -92,7 +92,7 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
         for i, batch in enumerate(loader):
             x = Variable(batch["image"], requires_grad=True)
             y = Variable(batch["label"])
-            print "On " + batch["image_name"]
+            print "On " + str(batch["image_name"])
 
             if torch.cuda.is_available():
                 x, y = x.cuda(), y.cuda()
@@ -144,7 +144,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
             x = Variable(batch["image"], requires_grad=False)
             y = Variable(batch["label"], requires_grad=False)
 
-            print "On " + batch["image_name"]
+            print "On " + str(batch["image_name"])
 
             if torch.cuda.is_available():
                 x, y = x.cuda(), y.cuda()
