@@ -127,7 +127,7 @@ for e in range(epochs):
     model.eval()
     test_acc = 0
     test_loss = 0
-    for i, batch in enumerate(test_set_loader):
+    for i, batch in enumerate(validation_set_loader):
     #trasformiamo i tensori in variabili
         x = Variable(batch["image"], requires_grad=False)
         y = Variable(batch["label"], requires_grad=False)
@@ -138,13 +138,13 @@ for e in range(epochs):
         test_loss += l.data[0] * x.shape[0]
 
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-        (e + 1, epochs, i, len(training_set_loader), l.data[0], acc),
+        (e + 1, epochs, i, len(validation_set_loader), l.data[0], acc),
 
     #salviamo il modello
     torch.save(model.state_dict(),'model-%d.pth'%(e+1,))
 
-    test_loss /= len(test_set)
-    test_acc /= len(test_set)
+    test_loss /= len(validation_set)
+    test_acc /= len(validation_set)
     
     test_losses.append(test_loss)
     test_accuracies.append(test_acc)
