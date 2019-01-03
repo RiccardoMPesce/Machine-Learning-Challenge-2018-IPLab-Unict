@@ -1,7 +1,5 @@
 """
-Dataset related module
-~
-Funzioni per operare sul dataset
+unzioni per operare sul dataset
 """
 
 import numpy as np
@@ -18,23 +16,21 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class MLCDataset(Dataset):
     """
-    Implement the MLCDataset class, so as to use it as a standart torch dataset
-    ~
     Implementa la classe MLCDataset, per utilizzarla su pytorch
     """
 
     def __init__(self, base_path, file_list, test=False, transform=None):
         """
-        - base_path: path to the folder containing the sample images
-        - file_list: path to the file containing sample labels
-        - transform: desired transform to apply
+        - base_path: percorso alla cartella contente le immagini
+        - file_list: percorso al file contente i nomi delle immagini
+        - transform: trasformazione da applicare
         """
 
         self.base_path = base_path
         self.image_list = [list(row) for row in pd.read_csv(file_list).values.tolist()]
         self.transform = transform
 
-        # Is in test mode?
+        # flag per indicare se sono etichette da test
         self.test = test
 
     def __getitem__(self, index):
@@ -59,13 +55,12 @@ class MLCDataset(Dataset):
     def __len__(self):
         return len(self.image_list)
 
-# Precomputed mean and std so as to save time.
-# Code to calculate them is commented beneath
+# Media e dev. standard pre computate attraverso algoritmo commentato sotto
 mean = torch.tensor([0.3881, 0.3659, 0.3551])
 std = torch.tensor([0.2088, 0.2086, 0.2085])
 
 """
-How to calculate mean and std
+Calcolo media e dev. standard
 
 mean = torch.zeros(3)
 std = torch.zeros(3)
@@ -84,7 +79,7 @@ std /= len(dataset)
 print mean, std
 """
 
-# Composing the transform
+# Composizione della trasformazione da applicare
 normalization = transforms.Compose([transforms.CenterCrop(224),
                                     transforms.ToTensor(),
                                     transforms.Normalize(mean, std)

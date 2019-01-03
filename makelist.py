@@ -1,5 +1,6 @@
 """
-Purpose: make a list of all the training samples
+Scopo: creare le liste da utilizzare durante l'allenamento, la validazione
+e il test del nostro modello
 """
 
 import pandas as pd

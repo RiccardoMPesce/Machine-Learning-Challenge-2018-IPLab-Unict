@@ -1,8 +1,7 @@
 """
-    Goal: given an image taken inside a supermarket, identify the position (store dept.)
-    where it was taken.
-    Solving this as a classification problem, where given a picture, the appropriate
-    department marked in the map is returned.
+    Obiettivo: data un'immagine scatta all'interno di un reparto
+    del supermercato, ritornare il numero identificante il reparto
+    stesso
 """
 
 import torch
@@ -14,7 +13,7 @@ import numpy as np
 import mlcdataset as mlc
 from matplotlib import pyplot as plt
 
-# Module containing the ResNet model
+# Modulo contenente la resnet
 from torchvision.models import resnet
 
 from torch import nn
@@ -27,7 +26,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 
-# Constants used throughout the code 
+# Costanti determinanti le dimensioni e gli iperparametri
 LR = 0.01
 M = 0.99
 N_EPOCHS = 50
@@ -59,20 +58,22 @@ resnet_model = resnet.resnet18(pretrained=False, **kwargs)
 criterion = nn.CrossEntropyLoss()
 optimizer = SGD(lr=LR, momentum=M, params=resnet_model.parameters())
 
-# Instancing variables
+# Istanziamento dei vari set, secondo le dimensioni riportate come costanti a inizio file
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
 training_set_loader = DataLoader(dataset=training_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 validation_set = mlc.MLCDataset(IMG_PATH, VALIDATION_SET_FILE, transform=mlc.normalization)
 validation_set_loader = DataLoader(dataset=validation_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
-test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization)
+test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization, test=True)
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
                 loader=training_set_loader, print_every=PRINT_EVERY):
     """
-    Training procedure
+    Procedura di training.
+    Vengono ritornati, oltre al modello, solo le losses e le accuracies, per fini
+    "statistici" di comparazione con la validazione
     """
     losses = []
     accuracies = []
@@ -119,6 +120,12 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
 
 def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, momentum=M, 
                 loader=validation_set_loader):
+    """
+    Procedura di validazione: 
+    Vengono ritornati, oltre al modello e accuracies & losses, l'f1-score, la matrice di confusione e la media
+    degli f1 (mF1). Inoltre, per ogni procedura di validazione, verrà salvato il relativo modello, in modo
+    da scegliere alla fine, quello che ha riportato migliori performances.
+    """
     losses = []
     accuracies = []
 
@@ -167,6 +174,12 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
                    "confusion_matrix": cm, "mf1s": mf1s}
 
 def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader):
+    """
+    Procedura di testing:
+    Questa procedura serve solamente a creare il file predictions.csv,
+    e siccome le immagini da test non sono etichettate, non è possibile
+    fare statistiche su di esse.
+    """
     pass   
 
 resnet_model, resnet_model_log = train_model()
