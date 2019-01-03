@@ -31,7 +31,7 @@ from sklearn.metrics import f1_score
 # Costanti determinanti le dimensioni e gli iperparametri
 LR = 0.01
 M = 0.99
-N_EPOCHS = 10
+N_EPOCHS = 25
 
 IMG_PATH = "dataset/images"
 
@@ -41,11 +41,11 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 60
-N_VALIDATION_SAMPLES = 20
-N_TEST_SAMPLES = 20
+N_TRAINING_SAMPLES = 600
+N_VALIDATION_SAMPLES = 200
+N_TEST_SAMPLES = 200
 
-BATCH_SIZE = 1
+BATCH_SIZE = 32
 N_WORKERS = 2
 
 PRINT_EVERY = 1
@@ -107,9 +107,6 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                 output = model(x)
                 loss = criterion(output, y)
 
-                f1s.append(f1_score(y.data, output.max(1)[1].data, average=None))
-                cms.append(confusion_matrix(y.data, output.max(1)[1].data))
-
                 if mode == "training":
                     loss.backward()
                     optimizer.step()
@@ -135,7 +132,10 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                     (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
 
     model_name = ""
+    
+    f1 = f1_score(y.data, output.max(1)[1].data, average=None)
+    cm = confusion_matrix(y.data, output.max(1)[1].data)
 
-    return model, {"losses": losses, "accuracies": accuracies, "f1s": f1s, "cms": cms}
+    return model, {"losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm}
 
 resnet18_model, logs = train_model(model=resnet18_model, optimizer=optimizer_18)
