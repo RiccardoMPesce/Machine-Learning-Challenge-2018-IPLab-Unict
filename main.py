@@ -106,8 +106,8 @@ for e in range(epochs):
         #accumuliamo i valori di training e loss
         #moltiplichiamo per x.shape[0], che restituisce la dimensione
         #del batch corrente.
-        train_loss += l.data[0] * x.shape[0]
-        train_acc += acc * x.shape[0]
+        train_loss += l.data.item() * x.shape[0]
+        train_acc += acc * x.shape.item()
 
         print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
         (e + 1, epochs, i, len(training_set_loader), l.data[0], acc),
@@ -135,10 +135,10 @@ for e in range(epochs):
         l = criterion(output,y)
 
         test_acc += accuracy_score(y.data,output.max(1)[1].data) * x.shape[0]
-        test_loss += l.data[0] * x.shape[0]
+        test_loss += l.data.item() * x.shape[0]
 
         print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-        (e + 1, epochs, i, len(validation_set_loader), l.data[0], acc),
+        (e + 1, epochs, i, len(validation_set_loader), l.data.item(), acc),
 
     #salviamo il modello
     torch.save(model.state_dict(),'model-%d.pth'%(e+1,))
