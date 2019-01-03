@@ -107,8 +107,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                 output = model(x)
                 loss = criterion(output, y)
 
-                f1s.append(f1_score(y.cpu().numpy(), output.cpu().numpy()))
-                cms.append(confusion_matrix(y.cpu().numpy(), output.cpu().numpy()))
+                f1s.append(f1_score(y.cpu().numpy(), output.cpu().detach().numpy()))
+                cms.append(confusion_matrix(y.cpu().numpy(), output.cpu().detach().numpy()))
 
                 if mode == "training":
                     loss.backward()
