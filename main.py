@@ -110,7 +110,7 @@ for e in range(epochs):
         train_acc += acc * x.shape[0]
 
         print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
-        (e + 1, epochs, i, len(training_set_loader), l.data[0], acc),
+        (e + 1, epochs, i, len(training_set_loader), l.data.item(), acc),
 
         optimizer.step() #sostituisce il codice di aggiornamento manuale dei parametri
         optimizer.zero_grad() #sostituisce il codice che si occupava di azzerare i gradienti
@@ -121,7 +121,7 @@ for e in range(epochs):
     training_losses.append(train_loss)
     training_accuracies.append(train_acc)
 
-    print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+    print "[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
     (e + 1, epochs, i, len(training_set_loader), train_loss, train_acc)
     #ciclo di test
     model.eval()
@@ -137,7 +137,7 @@ for e in range(epochs):
         test_acc += accuracy_score(y.data,output.max(1)[1].data) * x.shape[0]
         test_loss += l.data.item() * x.shape[0]
 
-        print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+        print "[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
         (e + 1, epochs, i, len(validation_set_loader), l.data.item(), acc),
 
     #salviamo il modello
@@ -149,5 +149,5 @@ for e in range(epochs):
     test_losses.append(test_loss)
     test_accuracies.append(test_acc)
 
-    print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+    print "[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
     (e + 1, epochs, i, len(test_set_loader), test_loss, test_acc)
