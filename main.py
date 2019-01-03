@@ -137,8 +137,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
 
     model_name = ""
     
-    f1 = f1_score(Y.data, preds.data, average=None)
-    cm = confusion_matrix(Y.data, preds.data)
+    f1 = f1_score(Y, preds, average=None)
+    cm = confusion_matrix(Y, preds)
 
     print "F1_score: " + str(f1)
     print "Confusion Matrix: " + str(cm)
