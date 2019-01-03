@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
     Obiettivo: data un'immagine scatta all'interno di un reparto
     del supermercato, ritornare il numero identificante il reparto

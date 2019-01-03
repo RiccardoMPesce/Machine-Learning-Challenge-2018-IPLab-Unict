@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 unzioni per operare sul dataset
 """

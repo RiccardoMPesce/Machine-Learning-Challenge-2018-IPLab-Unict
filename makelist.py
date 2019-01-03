@@ -1,3 +1,5 @@
+# coding=utf-8
+
 """
 Scopo: creare le liste da utilizzare durante l'allenamento, la validazione
 e il test del nostro modello
