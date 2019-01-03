@@ -108,7 +108,7 @@ def train_model(model=resnet_model, lr=LR, epochs=N_EPOCHS, momentum=M,
 
                 accuracy = accuracy_score(y.data, output.max(1)[1].data)
 
-                epoch_loss += l.data[0] * x.shape[0]
+                epoch_loss += loss.data[0] * x.shape[0]
                 epoch_accuracy += accuracy * x.shape[0]
 
                 samples += x.shape[0]
