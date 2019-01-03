@@ -16,9 +16,9 @@ def make_list(training_samples, validation_samples, test_samples,
     validation_list = [list(row) for row in pd.read_csv(validation_source_path).values.tolist()]
     test_list = [list(row) for row in pd.read_csv(test_source_path).values.tolist()]
 
-    training_samples = len(training_list) if training_samples > len(training_list) or training_samples < 0 else training_samples
-    validation_samples = len(validation_list) if validation_samples > len(validation_list) or validation_samples < 0 else validation_samples
-    test_samples = len(test_list) if test_samples > len(test_list) or test_samples < 0 else test_samples
+    training_samples = len(training_list) if training_samples > len(training_list) or training_samples <= 0 else training_samples
+    validation_samples = len(validation_list) if validation_samples > len(validation_list) or validation_samples <= 0 else validation_samples
+    test_samples = len(test_list) if test_samples > len(test_list) or test_samples <= 0 else test_samples
 
     with open("training_set.csv", "w") as training:
         for i in range(training_samples):
