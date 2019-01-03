@@ -136,6 +136,9 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
     f1 = f1_score(y.data, output.max(1)[1].data, average=None)
     cm = confusion_matrix(y.data, output.max(1)[1].data)
 
+    print "F1_score: " + str(f1)
+    print "Confusion Matrix: " + str(cm)
+
     return model, {"losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm}
 
 resnet18_model, logs = train_model(model=resnet18_model, optimizer=optimizer_18)
