@@ -71,7 +71,7 @@ test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization, 
 test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 def train_model(model=resnet_model, lr=LR, epochs=N_EPOCHS, momentum=M, 
-                training_loader=training_set_loader,test_loader=test_set_loader,
+                training_loader=training_set_loader,test_loader=validation_set_loader,
                 criterion=criterion, optimizer=optimizer):
     loaders = {"training": training_loader, "test": test_loader}
     losses = {"training": [], "test": []}
@@ -108,7 +108,7 @@ def train_model(model=resnet_model, lr=LR, epochs=N_EPOCHS, momentum=M,
 
                 accuracy = accuracy_score(y.data, output.max(1)[1].data)
 
-                epoch_loss += loss.data[0] * x.shape[0]
+                epoch_loss += loss.data.item() * x.shape[0]
                 epoch_accuracy += accuracy * x.shape[0]
 
                 samples += x.shape[0]
