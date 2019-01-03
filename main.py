@@ -42,7 +42,7 @@ TEST_SET_FILE = "test_set.csv"
 PREDICTIONS_FILE = "predictions.csv"
 
 N_TRAINING_SAMPLES = 60
-N_VALIDATION_SAMPLES = 50
+N_VALIDATION_SAMPLES = 20
 N_TEST_SAMPLES = 20
 
 BATCH_SIZE = 1
@@ -90,8 +90,8 @@ def train_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, moment
         epoch_accuracy = 0.0
 
         for i, batch in enumerate(loader):
-            x = Variable(batch["image"], requires_grad=True)
-            y = Variable(batch["label"])
+            x = batch["image"]
+            y = batch["label"]
 
             if torch.cuda.is_available():
                 x, y = x.cuda(), y.cuda()
@@ -140,20 +140,21 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
         epoch_accuracy = 0.0
 
         for i, batch in enumerate(loader):
-            x = Variable(batch["image"], requires_grad=False)
-            y = Variable(batch["label"], requires_grad=False)
+            with torch.no_grad():
+                x = batch["image"]
+                y = batch["label"]
 
-            if torch.cuda.is_available():
-                x, y = x.cuda(), y.cuda()
+                if torch.cuda.is_available():
+                    x, y = x.cuda(), y.cuda()
 
-            output = model(x)
+                output = model(x)
 
-            preds.append(output.max(1))
-            
-            loss = criterion(output, y)
+                preds.append(output.max(1))
+                
+                loss = criterion(output, y)
 
-            epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data)
-            epoch_loss += loss.data.item()
+                epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data)
+                epoch_loss += loss.data.item()
 
         epoch_loss /= len(loader)
         epoch_accuracy /= len(loader)
@@ -185,5 +186,84 @@ def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader)
     """
     pass   
 
-resnet_model, resnet_model_log = train_model()
-validated_model, validation_log = validate_model(resnet_model)
+# resnet_model, resnet_model_log = train_model()
+# validated_model, validation_log = validate_model(resnet_model)
+
+model = resnet_model
+epochs = N_EPOCHS
+lr = LR
+
+criterion = nn.CrossEntropyLoss()
+#l'optimizer ci permetterà di effettuare la Stochastic Gradient Descent
+#####################################################
+#Specifichiamo un momentum pari a 0.9
+optimizer = SGD(model.parameters(), lr, momentum=M)
+#####################################################
+training_losses = []
+training_accuracies = []
+test_losses = []
+test_accuracies = []
+
+for e in range(epochs):
+    #ciclo di training
+    model.train()
+    train_loss = 0
+    train_acc = 0
+    for i, batch in enumerate(training_set_loader):
+        #trasformiamo i tensori in variabili
+        x=Variable(batch[0])
+        y=Variable(batch[1])
+        output = model(x)
+        l = criterion(output,y)
+        l.backward()
+
+        acc = accuracy_score(y.data,output.max(1)[1].data)
+
+        #accumuliamo i valori di training e loss
+        #moltiplichiamo per x.shape[0], che restituisce la dimensione
+        #del batch corrente.
+        train_loss+=l.data[0]*x.shape[0]
+        train_acc+=acc*x.shape[0]
+
+        print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+        (e+1, epochs, i, len(training_set_loader), l.data[0], acc),
+
+        optimizer.step() #sostituisce il codice di aggiornamento manuale dei parametri
+        optimizer.zero_grad() #sostituisce il codice che si occupava di azzerare i gradienti
+
+    train_loss /= len(training_set)
+    train_acc /= len(training_set)
+
+    training_losses.append(train_loss)
+    training_accuracies.append(train_acc)
+
+    print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+    (e+1, epochs, i, len(training_set_loader), train_loss, train_acc)
+    #ciclo di test
+    model.eval()
+    test_acc=0
+    test_loss=0
+    for i, batch in enumerate(test_set_loader):
+    #trasformiamo i tensori in variabili
+        x=Variable(batch[0], requires_grad=False)
+        y=Variable(batch[1], requires_grad=False)
+        output = model(x)
+        l = criterion(output,y)
+
+        test_acc += accuracy_score(y.data,output.max(1)[1].data)*x.shape[0]
+        test_loss += l.data[0]*x.shape[0]
+
+        print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+        (e+1,epochs,i,len(training_set_loader),l.data[0],acc),
+
+    #salviamo il modello
+    torch.save(model.state_dict(),'model-%d.pth'%(e+1,))
+
+    test_loss/=len(test_set)
+    test_acc/=len(test_set)
+    
+    test_losses.append(test_loss)
+    test_accuracies.append(test_acc)
+
+    print "\r[TEST] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
+    (e+1,epochs,i,len(test_set_loader),test_loss,test_acc)
