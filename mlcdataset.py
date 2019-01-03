@@ -52,7 +52,7 @@ class MLCDataset(Dataset):
             image_label = int(image_label)
             return {"image": image, "label": image_label, "file": image_name}
         else:
-            return {"image": image, "file": image_name}
+            return {"image": image, "image_name": image_name}
 
     def __len__(self):
         return len(self.image_list)
