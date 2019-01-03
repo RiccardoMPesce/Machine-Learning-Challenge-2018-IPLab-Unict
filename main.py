@@ -107,7 +107,7 @@ for e in range(epochs):
         #moltiplichiamo per x.shape[0], che restituisce la dimensione
         #del batch corrente.
         train_loss += l.data.item() * x.shape[0]
-        train_acc += acc * x.shape.item()
+        train_acc += acc * x.shape[0]
 
         print "\r[TRAIN] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f" % \
         (e + 1, epochs, i, len(training_set_loader), l.data[0], acc),
