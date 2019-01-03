@@ -148,9 +148,8 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
             output = model(x)
 
-            np_output = output.data.cpu().numpy()
-            preds = np.concatenate(preds, np_output)
-
+            preds.append(output.data.item())
+            
             loss = criterion(output, y)
 
             epoch_accuracy += accuracy_score(y.data, output.max(1)[1].data)
