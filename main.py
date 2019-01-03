@@ -80,8 +80,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
     loaders = {"training": training_loader, "test": test_loader}
     losses = {"training": [], "test": []}
     accuracies = {"training": [], "test": []}
-    f1s = []
-    cms = []
+    Y = []
+    preds = []
 
     if torch.cuda.is_available():
         model = model.cuda()
@@ -105,6 +105,10 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                     x, y = x.cuda(), y.cuda()
 
                 output = model(x)
+
+                Y.append(y)
+                preds.append(output.max(1)[1].data)
+
                 loss = criterion(output, y)
 
                 if mode == "training":
@@ -133,8 +137,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
 
     model_name = ""
     
-    f1 = f1_score(y.data, output.max(1)[1].data, average=None)
-    cm = confusion_matrix(y.data, output.max(1)[1].data)
+    f1 = f1_score(Y.data, preds.data, average=None)
+    cm = confusion_matrix(Y.data, preds.data)
 
     print "F1_score: " + str(f1)
     print "Confusion Matrix: " + str(cm)
