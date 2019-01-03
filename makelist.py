@@ -19,7 +19,7 @@ def make_list(training_samples, validation_samples, test_samples,
     with open("training_set.csv", "w") as training:
         if training_samples <= 0 or training_samples > len(training_list):
             shuffle(training_list)
-            for temp in training_samples:
+            for temp in training_list:
                 training.write(temp[0] + ", " + str(temp[-1]) + "\n")
         else:
             for i in range(training_samples):
