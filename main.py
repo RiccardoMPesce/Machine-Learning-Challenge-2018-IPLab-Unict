@@ -50,9 +50,9 @@ N_WORKERS = 4
 
 PRINT_EVERY = 1
 
-makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
+""" makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
-                   "dataset/testing_list_blind.csv")
+                   "dataset/testing_list_blind.csv") """
 
 kwargs = {"num_classes": 16}
 
