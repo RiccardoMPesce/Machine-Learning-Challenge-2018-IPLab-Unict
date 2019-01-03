@@ -148,7 +148,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
 
             output = model(x)
 
-            preds.append(output.max(1).data)
+            preds.append(output.max(1))
             
             loss = criterion(output, y)
 
