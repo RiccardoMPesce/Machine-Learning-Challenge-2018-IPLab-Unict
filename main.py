@@ -113,8 +113,8 @@ def train_model(model=resnet_model, lr=LR, epochs=N_EPOCHS, momentum=M,
 
                 samples += x.shape[0]
 
-                print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
-                    (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss / samples, epoch_accuracy / samples)
+                """ print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
+                    (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss / samples, epoch_accuracy / samples) """
 
             epoch_loss /= samples 
             epoch_accuracy /= samples
