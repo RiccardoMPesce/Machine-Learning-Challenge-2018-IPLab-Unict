@@ -185,12 +185,5 @@ def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader)
     """
     pass   
 
-# resnet_model, resnet_model_log = train_model()
-# validated_model, validation_log = validate_model(resnet_model)
-
-i = 0
-for batch in validation_set_loader:
-    print batch["label"].item()
-    i += 1
-
-print i
+resnet_model, resnet_model_log = train_model()
+validated_model, validation_log = validate_model(resnet_model)
