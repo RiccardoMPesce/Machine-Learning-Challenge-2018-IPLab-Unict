@@ -165,7 +165,7 @@ def validate_model(model=resnet_model, optimizer=optimizer, epochs=N_EPOCHS, mom
     if torch.cuda.is_available():
         preds = preds.cuda()
 
-    f1 = f1_score(y, preds, average=None)
+    f1 = f1_score(y.numpy(), preds.numpy(), average=None)
     cm = confusion_matrix(y, preds)
     mf1s = f1.mean()
 
@@ -185,5 +185,12 @@ def test_model(model=resnet_model, epochs=N_EPOCHS, test_loader=test_set_loader)
     """
     pass   
 
-resnet_model, resnet_model_log = train_model()
-validated_model, validation_log = validate_model(resnet_model)
+# resnet_model, resnet_model_log = train_model()
+# validated_model, validation_log = validate_model(resnet_model)
+
+i = 0
+for batch in validation_set_loader:
+    print batch["label"].item()
+    i += 1
+
+print i
