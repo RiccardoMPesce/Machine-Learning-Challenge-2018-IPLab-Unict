@@ -50,7 +50,7 @@ class MLCDataset(Dataset):
 
         if not self.test:
             image_label = int(image_label)
-            return {"image": image, "label": image_label, "image_name": image_name}
+            return {"image": image, "label": image_label, "image_name": str(image_name)}
         else:
             return {"image": image, "image_name": image_name}
 
