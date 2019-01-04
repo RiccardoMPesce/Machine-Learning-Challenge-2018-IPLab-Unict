@@ -160,6 +160,10 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
         for sample in test_loader:
             image_file = sample["image_name"]
             x = sample["image"]
+
+            if torch.cuda.is_available():
+                image_file, x = image_file.cuda(), x.cuda()
+
             output = model(x)
 
             output_class = output.max(1)[1].item()
