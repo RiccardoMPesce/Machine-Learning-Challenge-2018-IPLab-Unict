@@ -106,17 +106,6 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
 
                 output = model(x)
 
-                print y
-                print y.data 
-                print y.data.shape 
-                print output
-                print output.data
-                print output.data.shape
-                print output.max(1).data
-                print output.max(1)[0].data
-                print output.max(1)[1].data
-                print output.max(1)[1].data.shape
-
                 if mode == "test":
                     """ if y.data == output.max(1)[1].data:
                         print "Predizione corretta"
@@ -124,7 +113,7 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                         print "Predizione non corretta" """
 
                     Y.append(y.data)
-                    preds.append(output.max(1)[1].data)
+                    preds.append(output.max(1)[1])
 
                 loss = criterion(output, y)
 
@@ -133,7 +122,7 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                     optimizer.step()
                     optimizer.zero_grad()
 
-                accuracy = accuracy_score(y.data, output.max(1)[1].data)
+                accuracy = accuracy_score(y.data, output.max(1)[1])
 
                 epoch_loss += loss.data.item() * x.shape[0]
                 epoch_accuracy += accuracy * x.shape[0]
