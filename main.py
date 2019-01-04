@@ -167,4 +167,5 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 
 
 
-resnet18_model, logs = train_model(model=resnet18_model, optimizer=optimizer_18)
+resnet18_model, logs = train_model(model=resnet18_model, model_name="resnet18" optimizer=optimizer_18)
+test_model(model=resnet18_model, model_name="resnet18")
