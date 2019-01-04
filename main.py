@@ -81,61 +81,60 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
     if torch.cuda.is_available():
         model = model.cuda()
 
-    for epoch in range(epochs):
-        for mode in ["training", "test"]:
-            if mode == "training":
-                model.train()
-            else:
-                model.eval()
-
-            epoch_loss = 0
-            epoch_accuracy = 0
-            samples = 0
-
-            for i, batch in enumerate(loaders[mode]):
-                x = Variable(batch["image"], requires_grad=(mode == "training"))
-                y = Variable(batch["label"])
-
-                if torch.cuda.is_available():
-                    x, y = x.cuda(), y.cuda()
-
-                output = model(x)
-
-                if mode == "test":
-                    Y.extend(y.data.tolist())
-                    preds.extend(output.max(1)[1].tolist())
-
-                loss = criterion(output, y)
-
+    with open(model_name + "_training_table_report.csv", "w") as training_report, open(model_name + "_test_table_report.csv", "w") as test_report:
+        for epoch in range(epochs):
+            for mode in ["training", "test"]:
                 if mode == "training":
-                    loss.backward()
-                    optimizer.step()
-                    optimizer.zero_grad()
+                    model.train()
+                else:
+                    model.eval()
 
-                accuracy = accuracy_score(y.data, output.max(1)[1])
+                epoch_loss = 0
+                epoch_accuracy = 0
+                samples = 0
 
-                epoch_loss += loss.data.item() * x.shape[0]
-                epoch_accuracy += accuracy * x.shape[0]
+                for i, batch in enumerate(loaders[mode]):
+                    x = Variable(batch["image"], requires_grad=(mode == "training"))
+                    y = Variable(batch["label"])
 
-                samples += x.shape[0]
+                    if torch.cuda.is_available():
+                        x, y = x.cuda(), y.cuda()
 
-                """ print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
-                    (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss / samples, epoch_accuracy / samples) """
+                    output = model(x)
 
-            epoch_loss /= samples 
-            epoch_accuracy /= samples
+                    if mode == "test":
+                        Y.extend(y.data.tolist())
+                        preds.extend(output.max(1)[1].tolist())
 
-            losses[mode].append(epoch_loss)
-            accuracies[mode].append(epoch_accuracy)
+                    loss = criterion(output, y)
 
-            print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
-                    (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
+                    if mode == "training":
+                        loss.backward()
+                        optimizer.step()
+                        optimizer.zero_grad()
 
-            with open(model_name + "_training_table_report.csv", "w") as training_report:
-                training_report.write(str(epoch + 1) + ", " + str(epoch_loss) + ", " + str(epoch_accuracy) + "\n")
+                    accuracy = accuracy_score(y.data, output.max(1)[1])
 
-            with open(model_name + "_test_table_report.csv", "w") as training_report:
-                training_report.write(str(epoch + 1) + ", " + str(epoch_loss) + ", " + str(epoch_accuracy) + "\n")
+                    epoch_loss += loss.data.item() * x.shape[0]
+                    epoch_accuracy += accuracy * x.shape[0]
+
+                    samples += x.shape[0]
+
+                    """ print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
+                        (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss / samples, epoch_accuracy / samples) """
+
+                epoch_loss /= samples 
+                epoch_accuracy /= samples
+
+                losses[mode].append(epoch_loss)
+                accuracies[mode].append(epoch_accuracy)
+
+                print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
+                        (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
+                if mode == "training":
+                    training_report.write(str(epoch + 1) + ", " + str(epoch_loss) + ", " + str(epoch_accuracy) + "\n")
+                else:
+                    test_report.write(str(epoch + 1) + ", " + str(epoch_loss) + ", " + str(epoch_accuracy) + "\n")
 
     model_name = str(model_name)
     torch.save(model.state_dict(), model_name + "_state_dict" + ".pt")
