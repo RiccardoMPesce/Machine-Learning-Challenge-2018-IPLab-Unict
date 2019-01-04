@@ -138,7 +138,7 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
                     (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
 
     model_name = str(model_name)
-    torch.save(model.state_dict(), "saved_models/" + model_name + "_state_dict" + ".pt")
+    torch.save(model.state_dict(), model_name + "_state_dict" + ".pt")
     
     f1 = f1_score(Y, preds, average=None)
     cm = confusion_matrix(Y, preds)
@@ -149,7 +149,7 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
     return model.cpu(), {"model_name": model_name, "losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm, "mf1": f1.mean()}
 
 def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
-    model.load_state_dict(torch.load("saved_models/" + model_name + "_state_dict" + ".pt"))
+    model.load_state_dict(torch.load(model_name + "_state_dict" + ".pt"))
     
     if torch.cuda.is_available():
         model = model.cuda()
