@@ -107,9 +107,6 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                 output = model(x)
 
                 if mode == "test":
-                    print y.data.tolist()
-                    print output.max(1)[1].tolist()
-
                     Y.extend(y.data.tolist())
                     preds.extend(output.max(1)[1].tolist())
 
