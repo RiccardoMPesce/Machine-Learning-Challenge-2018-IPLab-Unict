@@ -11,6 +11,7 @@ import torch
 import makelist
 import sys
 import numpy as np
+import os
 
 import mlcdataset as mlc
 from matplotlib import pyplot as plt
@@ -72,9 +73,9 @@ validation_set = mlc.MLCDataset(IMG_PATH, VALIDATION_SET_FILE, transform=mlc.nor
 validation_set_loader = DataLoader(dataset=validation_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization, test=True)
-test_set_loader = DataLoader(dataset=test_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
+test_set_loader = DataLoader(dataset=test_set, batch_size=1, num_workers=N_WORKERS, shuffle=True)
 
-def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M, 
+def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M, 
                 training_loader=training_set_loader,test_loader=validation_set_loader,
                 criterion=criterion):
     loaders = {"training": training_loader, "test": test_loader}
@@ -136,7 +137,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
             print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
                     (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
 
-    model_name = ""
+    model_name = str(model_name)
+    torch.save(model, "saved_models/" + model_name + ".pt")
     
     f1 = f1_score(Y, preds, average=None)
     cm = confusion_matrix(Y, preds)
@@ -144,6 +146,25 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
     print "F1_score: " + str(f1)
     print "Confusion Matrix: " + str(cm)
 
-    return model, {"losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm}
+    return model, {"model_name": model_name, "losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm, "mf1": f1.mean()}
+
+def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
+    if torch.cuda.is_available():
+        model = model.cuda()
+
+    model = torch.load("saved_models/" + model_name + ".pt")
+    model.eval()
+
+    with open(model_name + PREDICTIONS_FILE, "w") as predictions:
+        for sample in test_loader:
+            image_file = sample["image_name"]
+            x = sample["image"]
+            output = model(x)
+
+            output_class = output.max(1)[1].item()
+
+            predictions.write(image_file + ", " + str(output_class))
+
+
 
 resnet18_model, logs = train_model(model=resnet18_model, optimizer=optimizer_18)
