@@ -132,10 +132,10 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
                     (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
 
             with open(model_name + "_training_table_report.csv", "w") as training_report:
-                training_report.write(str(epoch + 1) + ", " + str(epoch_loss), ", " + str(epoch_accuracy) + "\n")
+                training_report.write(str(epoch + 1) + ", " + str(epoch_loss) + ", " + str(epoch_accuracy) + "\n")
 
             with open(model_name + "_test_table_report.csv", "w") as training_report:
-                training_report.write(str(epoch + 1) + ", " + str(epoch_loss), ", " + str(epoch_accuracy) + "\n")
+                training_report.write(str(epoch + 1) + ", " + str(epoch_loss) + ", " + str(epoch_accuracy) + "\n")
 
     model_name = str(model_name)
     torch.save(model.state_dict(), model_name + "_state_dict" + ".pt")
