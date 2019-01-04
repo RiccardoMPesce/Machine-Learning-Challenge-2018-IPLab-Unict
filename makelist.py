@@ -42,7 +42,7 @@ def make_list(training_samples, validation_samples, test_samples,
         if test_samples <= 0 or test_samples > len(test_list):
             shuffle(test_list)
             for temp in test_list:
-                test.write(temp[0] + ", " + str(temp[-1]) + "\n")
+                test.write(temp[0] + "\n")
         else:
             for i in range(test_samples):
                 shuffle(test_list)
