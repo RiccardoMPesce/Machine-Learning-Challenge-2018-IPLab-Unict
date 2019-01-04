@@ -83,8 +83,6 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
     Y = []
     preds = []
 
-    print model
-
     if torch.cuda.is_available():
         model = model.cuda()
 
@@ -108,11 +106,22 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
 
                 output = model(x)
 
+                print y
+                print y.data 
+                print y.data.shape 
+                print output
+                print output.data
+                print output.data.shape
+                print output.max(1).data
+                print output.max(1)[0].data
+                print output.max(1)[1].data
+                print output.max(1)[1].data.shape
+
                 if mode == "test":
-                    if y.data == output.max(1)[1].data:
+                    """ if y.data == output.max(1)[1].data:
                         print "Predizione corretta"
                     else:
-                        print "Predizione non corretta"
+                        print "Predizione non corretta" """
 
                     Y.append(y.data)
                     preds.append(output.max(1)[1].data)
