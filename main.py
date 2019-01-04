@@ -149,10 +149,11 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
     return model, {"model_name": model_name, "losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm, "mf1": f1.mean()}
 
 def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
+    model = torch.load("saved_models/" + model_name + ".pt")
+    
     if torch.cuda.is_available():
         model = model.cuda()
 
-    model = torch.load("saved_models/" + model_name + ".pt")
     model.eval()
 
     with open(model_name + PREDICTIONS_FILE, "w") as predictions:
