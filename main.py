@@ -146,14 +146,14 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
     print "F1_score: " + str(f1)
     print "Confusion Matrix: " + str(cm)
 
-    return model.cpu(), {"model_name": model_name, "losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm, "mf1": f1.mean()}
+    return model, {"model_name": model_name, "losses": losses, "accuracies": accuracies, "f1": f1, "cm": cm, "mf1": f1.mean()}
 
 def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
     model.load_state_dict(torch.load(model_name + "_state_dict" + ".pt"))
     
     if torch.cuda.is_available():
         model = model.cuda()
-
+    
     model.eval()
 
     with open(model_name + PREDICTIONS_FILE, "w") as predictions:
