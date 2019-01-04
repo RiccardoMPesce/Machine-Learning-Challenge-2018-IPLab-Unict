@@ -107,7 +107,7 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                 output = model(x)
 
                 if mode == "test":
-                    if y.data == output.max(1)[1].data:
+                    if y.data == output.max(1)[1]:
                         print "Predizione corretta"
                     else:
                         print "Predizione non corretta"
