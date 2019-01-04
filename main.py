@@ -63,7 +63,7 @@ resnet34_model = resnet.resnet34(pretrained=False, **kwargs)
 criterion = nn.CrossEntropyLoss()
 
 optimizer_18 = SGD(lr=LR, momentum=M, params=resnet18_model.parameters())
-optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
+# optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
 
 # Istanziamento dei vari set, secondo le dimensioni riportate come costanti a inizio file
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
@@ -167,5 +167,5 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 
 
 
-resnet18_model, logs = train_model(model=resnet18_model, model_name="resnet18" optimizer=optimizer_18)
+resnet18_model, logs = train_model(model=resnet18_model, model_name="resnet18", optimizer=optimizer_18)
 test_model(model=resnet18_model, model_name="resnet18")
