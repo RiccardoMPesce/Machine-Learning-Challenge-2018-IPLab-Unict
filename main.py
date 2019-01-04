@@ -57,20 +57,14 @@ makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
 
 kwargs = {"num_classes": 16}
 
-resnet18_model = resnet.resnet18(pretrained=False, **kwargs)
-resnet34_model = resnet.resnet34(pretrained=False, **kwargs)
-
 criterion = nn.CrossEntropyLoss()
-
-optimizer_18 = SGD(lr=LR, momentum=M, params=resnet18_model.parameters())
-# optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
 
 # Istanziamento dei vari set, secondo le dimensioni riportate come costanti a inizio file
 training_set = mlc.MLCDataset(IMG_PATH, TRAINING_SET_FILE, transform=mlc.normalization)
 training_set_loader = DataLoader(dataset=training_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
 
 validation_set = mlc.MLCDataset(IMG_PATH, VALIDATION_SET_FILE, transform=mlc.normalization)
-validation_set_loader = DataLoader(dataset=validation_set, batch_size=BATCH_SIZE, num_workers=N_WORKERS, shuffle=True)
+validation_set_loader = DataLoader(dataset=validation_set, batch_size=1, num_workers=N_WORKERS, shuffle=True)
 
 test_set = mlc.MLCDataset(IMG_PATH, TEST_SET_FILE, transform=mlc.normalization, test=True)
 test_set_loader = DataLoader(dataset=test_set, batch_size=1, num_workers=N_WORKERS, shuffle=True)
@@ -137,6 +131,12 @@ def train_model(model, model_name, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M
             print "[%s] Epoch %d/%d. Iteration %d/%d. Loss: %0.2f. Accuracy: %0.2f\n" % \
                     (mode, epoch + 1, epochs, i, len(loaders[mode]), epoch_loss, epoch_accuracy)
 
+            with open(model_name + "_training_table_report.csv", "w") as training_report:
+                training_report.write(str(epoch + 1) + ", " + str(epoch_loss), ", " + str(epoch_accuracy) + "\n")
+
+            with open(model_name + "_test_table_report.csv", "w") as training_report:
+                training_report.write(str(epoch + 1) + ", " + str(epoch_loss), ", " + str(epoch_accuracy) + "\n")
+
     model_name = str(model_name)
     torch.save(model.state_dict(), model_name + "_state_dict" + ".pt")
     
@@ -156,7 +156,7 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
     
     model.eval()
 
-    with open(model_name + PREDICTIONS_FILE, "w") as predictions:
+    with open(model_name + "_" + PREDICTIONS_FILE, "w") as predictions:
         for sample in test_loader:
             image_file = sample["image_name"][0]
             x = Variable(sample["image"], requires_grad=False)
@@ -170,7 +170,13 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 
             predictions.write(image_file + ", " + str(output_class) + "\n")
 
+# Modelli
+resnet18_model = resnet.resnet18(pretrained=False, **kwargs)
+resnet34_model = resnet.resnet34(pretrained=False, **kwargs)
 
+# Ottimizzatori
+optimizer_18 = SGD(lr=LR, momentum=M, params=resnet18_model.parameters())
+# optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
 
 resnet18_model, logs = train_model(model=resnet18_model, model_name="resnet18", optimizer=optimizer_18)
 test_model(model=resnet18_model, model_name="resnet18")
