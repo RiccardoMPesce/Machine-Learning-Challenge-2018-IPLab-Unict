@@ -83,6 +83,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
     Y = []
     preds = []
 
+    print model
+
     if torch.cuda.is_available():
         model = model.cuda()
 
@@ -106,8 +108,14 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
 
                 output = model(x)
 
-                Y.append(y)
-                preds.append(output.max(1)[1].data)
+                if mode == "test":
+                    if y.data == output.max(1)[1].data:
+                        print "Predizione corretta"
+                    else:
+                        print "Predizione non corretta"
+
+                    Y.append(y.data)
+                    preds.append(output.max(1)[1].data)
 
                 loss = criterion(output, y)
 
