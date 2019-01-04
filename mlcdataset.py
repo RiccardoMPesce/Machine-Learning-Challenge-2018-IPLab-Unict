@@ -42,7 +42,7 @@ class MLCDataset(Dataset):
         if not self.test:
             image_label = sample[1]
 
-        image_path = path.join(self.base_path, image_name)
+        image_path = self.base_path + "/" + image_name
         image = Image.open(image_path)
       
         if self.transform is not None:
