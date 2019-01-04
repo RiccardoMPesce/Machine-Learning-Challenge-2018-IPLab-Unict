@@ -158,8 +158,8 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 
     with open(model_name + PREDICTIONS_FILE, "w") as predictions:
         for sample in test_loader:
-            image_file = sample["image_name"]
-            x = sample["image"]
+            image_file = Variable(sample["image_name"], requires_grad=False)
+            x = Variable(sample["image"], requires_grad=False)
 
             if torch.cuda.is_available():
                 image_file, x = image_file.cuda(), x.cuda()
