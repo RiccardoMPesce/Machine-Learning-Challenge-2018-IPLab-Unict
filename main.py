@@ -168,7 +168,7 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 
             output_class = output.max(1)[1].item()
 
-            predictions.write(image_file + ", " + str(output_class))
+            predictions.write(image_file + ", " + str(output_class) + "\n")
 
 
 
