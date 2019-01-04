@@ -101,6 +101,8 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                 x = Variable(batch["image"], requires_grad=(mode == "training"))
                 y = Variable(batch["label"])
 
+                print batch["label"]
+
                 if torch.cuda.is_available():
                     x, y = x.cuda(), y.cuda()
 
@@ -109,7 +111,7 @@ def train_model(model, optimizer, lr=LR, epochs=N_EPOCHS, momentum=M,
                 if mode == "test":
                     print y.data 
                     print output.max(1)[1]
-                    
+
                     if y.data == output.max(1)[1]:
                         print "Predizione corretta"
                     else:
