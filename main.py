@@ -32,7 +32,7 @@ from sklearn.metrics import f1_score
 # Costanti determinanti le dimensioni e gli iperparametri
 LR = 0.01
 M = 0.99
-N_EPOCHS = 30
+N_EPOCHS = 25
 
 IMG_PATH = "dataset/images"
 
@@ -42,8 +42,8 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 10000
-N_VALIDATION_SAMPLES = 1000
+N_TRAINING_SAMPLES = 1000
+N_VALIDATION_SAMPLES = 350
 N_TEST_SAMPLES = 400
 
 BATCH_SIZE = 32
@@ -54,8 +54,6 @@ PRINT_EVERY = 1
 makelist.make_list(N_TRAINING_SAMPLES, N_VALIDATION_SAMPLES, N_TEST_SAMPLES,
                    "dataset/training_list.csv", "dataset/validation_list.csv",
                    "dataset/testing_list_blind.csv")
-
-kwargs = {"num_classes": 16}
 
 criterion = nn.CrossEntropyLoss()
 
@@ -169,13 +167,16 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 
             predictions.write(image_file + ", " + str(output_class) + "\n")
 
+# Passare questo come argomento della classe resnet, in modo da avere 16 classi in uscita
+kwargs = {"num_classes": 16}
+
 # Modelli
 resnet18_model = resnet.resnet18(pretrained=False, **kwargs)
 resnet34_model = resnet.resnet34(pretrained=False, **kwargs)
 
 # Ottimizzatori
 optimizer_18 = SGD(lr=LR, momentum=M, params=resnet18_model.parameters())
-# optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
+optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
 
-resnet18_model, logs = train_model(model=resnet18_model, model_name="resnet18", optimizer=optimizer_18)
-test_model(model=resnet18_model, model_name="resnet18")
+resnet34_model, logs = train_model(model=resnet34_model, model_name="resnet34", optimizer=optimizer_34)
+test_model(model=resnet34_model, model_name="resnet34")
