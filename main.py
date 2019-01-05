@@ -172,11 +172,11 @@ kwargs = {"num_classes": 16}
 
 # Modelli
 resnet18_model = resnet.resnet18(pretrained=False, **kwargs)
-resnet34_model = resnet.resnet34(pretrained=False, **kwargs)
+resnet50_model = resnet.resnet50(pretrained=False, **kwargs)
 
 # Ottimizzatori
 optimizer_18 = SGD(lr=LR, momentum=M, params=resnet18_model.parameters())
-optimizer_34 = SGD(lr=LR, momentum=M, params=resnet34_model.parameters())
+optimizer_50 = SGD(lr=LR, momentum=M, params=resnet50_model.parameters())
 
-resnet34_model, logs = train_model(model=resnet34_model, model_name="resnet34", optimizer=optimizer_34)
-test_model(model=resnet34_model, model_name="resnet34")
+resnet50_model, logs = train_model(model=resnet50_model, model_name="resnet50", optimizer=optimizer_50)
+test_model(model=resnet50_model, model_name="resnet50")
