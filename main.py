@@ -32,7 +32,7 @@ from sklearn.metrics import f1_score
 # Costanti determinanti le dimensioni e gli iperparametri
 LR = 0.02
 M = 0.99
-N_EPOCHS = 25
+N_EPOCHS = 30
 
 IMG_PATH = "dataset/images"
 
@@ -42,8 +42,8 @@ TEST_SET_FILE = "test_set.csv"
 
 PREDICTIONS_FILE = "predictions.csv"
 
-N_TRAINING_SAMPLES = 1000
-N_VALIDATION_SAMPLES = 350
+N_TRAINING_SAMPLES = 10000
+N_VALIDATION_SAMPLES = 1000
 N_TEST_SAMPLES = 400
 
 BATCH_SIZE = 32
