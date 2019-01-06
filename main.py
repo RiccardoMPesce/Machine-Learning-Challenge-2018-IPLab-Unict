@@ -171,7 +171,7 @@ def test_model(model, model_name, epochs=N_EPOCHS, test_loader=test_set_loader):
 kwargs = {"num_classes": 16}
 
 # Modelli
-resnet18_model = resnet.resnet18(pretrained=True, **kwargs)
+resnet18_model = resnet.resnet18(pretrained=False, **kwargs)
 resnet50_model = resnet.resnet50(pretrained=False, **kwargs)
 
 # Ottimizzatori
