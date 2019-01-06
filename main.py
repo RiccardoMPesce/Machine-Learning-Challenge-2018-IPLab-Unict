@@ -30,7 +30,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score
 
 # Costanti determinanti le dimensioni e gli iperparametri
-LR = 0.05
+LR = 0.02
 M = 0.99
 N_EPOCHS = 25
 
